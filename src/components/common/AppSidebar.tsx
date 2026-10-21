@@ -267,10 +267,12 @@ export function AppSidebar() {
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                {/* TODO(auth): wire to sign-out. */}
-                <DropdownMenuItem disabled>
-                  <LogOut />
-                  Sign out
+                {/* TODO(auth): end the session before leaving for the sign-in page. */}
+                <DropdownMenuItem asChild>
+                  <Link href="/login" onClick={closeOnMobile}>
+                    <LogOut />
+                    Sign out
+                  </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

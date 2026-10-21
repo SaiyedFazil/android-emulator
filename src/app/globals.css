@@ -61,6 +61,8 @@
   --color-status-offline-soft: var(--status-offline-soft);
   --color-status-offline-foreground: var(--status-offline-foreground);
 
+  --color-shine: var(--shine);
+
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -68,6 +70,70 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* Ambient loops on the sign-in page. Each animates its own property (`translate`, `scale`,
+ * `box-shadow`, `width`, …) so it composes with Tailwind's translate/rotate utilities. */
+@theme {
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-signal: signal 5s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+  --animate-halo: halo 2s ease-out infinite;
+  --animate-boot: boot 3.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  --animate-caret: caret 1.1s steps(1) infinite;
+  --animate-sheen: sheen 0.9s ease;
+
+  @keyframes float {
+    0%,
+    100% {
+      translate: 0 0;
+    }
+    50% {
+      translate: 0 -10px;
+    }
+  }
+  @keyframes signal {
+    0% {
+      scale: 0.55;
+      opacity: 0.6;
+    }
+    100% {
+      scale: 1.25;
+      opacity: 0;
+    }
+  }
+  /* A ring that spreads from the element in its own text colour. */
+  @keyframes halo {
+    0% {
+      box-shadow: 0 0 0 0 color-mix(in oklch, currentColor 55%, transparent);
+    }
+    100% {
+      box-shadow: 0 0 0 8px transparent;
+    }
+  }
+  @keyframes boot {
+    0% {
+      width: 6%;
+    }
+    70% {
+      width: 94%;
+    }
+    100% {
+      width: 100%;
+    }
+  }
+  @keyframes caret {
+    50% {
+      opacity: 0;
+    }
+  }
+  @keyframes sheen {
+    from {
+      left: -60%;
+    }
+    to {
+      left: 130%;
+    }
+  }
 }
 
 /* Direction A — Graphite & Teal. Light work area, graphite chrome, deep teal accent. */
@@ -126,6 +192,9 @@
   --status-offline: #f04438;
   --status-offline-soft: #fdecec;
   --status-offline-foreground: #b42318;
+
+  /* Light streak swept across primary buttons on hover. */
+  --shine: oklch(1 0 0 / 0.3);
 }
 
 .dark {
@@ -180,6 +249,8 @@
   --status-offline: #ff6b6b;
   --status-offline-soft: color-mix(in oklch, #ff6b6b 15%, transparent);
   --status-offline-foreground: #ff8a8a;
+
+  --shine: oklch(1 0 0 / 0.38);
 }
 
 @layer base {
@@ -201,4 +272,23 @@
 
 @utility tabular {
   font-variant-numeric: tabular-nums;
+}
+
+/* Sign-in showcase: a dot grid that fades out from the device cluster… */
+@utility showcase-grid {
+  background-image: radial-gradient(
+    color-mix(in oklch, var(--foreground) 8%, transparent) 1px,
+    transparent 1.3px
+  );
+  background-size: 22px 22px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, #000 15%, transparent 75%);
+}
+
+/* …and the teal light the screens cast behind it. */
+@utility showcase-glow {
+  background-image: radial-gradient(
+    closest-side,
+    color-mix(in oklch, var(--primary) 22%, transparent),
+    transparent
+  );
 }

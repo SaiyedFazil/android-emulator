@@ -21,6 +21,8 @@ Run lint, format:check, typecheck and build before calling work done.
 
 - `@/*` → `src/*`. Components PascalCase, hooks kebab-case (`use-mobile.ts`).
 - `src/app/<route>/page.tsx` is thin: metadata + `<Route />` from `components/pages/<route>/`.
+  Console routes sit in the `(console)` route group, whose layout adds the sidebar and navbar;
+  `/login` is outside it and has no app chrome.
 - `components/pages/<route>/` holds page content with `components/`, `constants/`, `utils/` beside it.
 - `components/common/` app chrome · `components/custom/` shared components · `components/ui/` shadcn primitives.
 - Colours come only from theme tokens in `src/app/globals.css` — no hex values or `bg-white` in
@@ -42,6 +44,11 @@ Run lint, format:check, typecheck and build before calling work done.
   directory would otherwise become the workspace root.
 - `/` → `/dashboard` is a redirect in `next.config.ts` (a page-level `redirect()` errors under
   Cache Components validation).
+- Sign-in page (`components/pages/login`): the showcase panel carries the `dark` class, a
+  dark-mode island that keeps it graphite in both themes like the sidebar. Entrance animations
+  are CSS (`Reveal`, tw-animate-css) so nothing is server-rendered hidden until hydration; Motion
+  (`motion/react`) is only for interactive pieces (terminal lines, alert, icon swaps). Ambient
+  loops are `--animate-*` keyframes in `globals.css`.
 
 ## Git
 

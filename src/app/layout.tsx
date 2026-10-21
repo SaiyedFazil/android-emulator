@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
-import { AppLayout } from "@/components/common/AppLayout";
 import { ThemeProvider } from "@/components/common/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -33,7 +32,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full">
         <ThemeProvider>
           <TooltipProvider delayDuration={200}>
-            <AppLayout>{children}</AppLayout>
+            {children}
             <Toaster richColors position="bottom-right" />
           </TooltipProvider>
         </ThemeProvider>
