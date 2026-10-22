@@ -2,32 +2,14 @@
 
 import * as React from "react";
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
   flexRender,
-  getCoreRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-  Updater,
-  PaginationState,
-  RowData,
+  useTable,
+  type ColumnFiltersState,
+  type PaginationState,
+  type RowData,
+  type SortingState,
+  type Updater,
 } from "@tanstack/react-table";
-
-declare module "@tanstack/react-table" {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface ColumnMeta<TData extends RowData, TValue> {
-    /** Field label used by the mobile card grid; falls back to the header title or column id. */
-    label?: string;
-    headerClassName?: string;
-    cellClassName?: string;
-    minWidth?: string | number;
-  }
-}
 
 import {
   Table,
@@ -40,9 +22,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
+import { dataTableFeatures, type DataTableColumnDef } from "./data-table.features";
 import { DataTablePagination } from "./DataTablePagination";
 import { DataTableMobileGrid } from "./DataTableMobileGrid";
-import { DataTableSkeleton } from "./DataTableSkeleton";
 import { cn } from "@/lib/utils";
 
 /* Header styling for the desktop table.
@@ -70,8 +52,8 @@ const TABLE_HEADER_CLASS = [
   "[&_[data-slot=checkbox][data-state=indeterminate]]:text-table-header",
 ].join(" ");
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
+interface DataTableProps<TData extends RowData> {
+  columns: DataTableColumnDef<TData>[];
   data: TData[];
   pageCount?: number;
   manualPagination?: boolean;
@@ -126,7 +108,7 @@ interface DataTableProps<TData, TValue> {
   renderExpandedRow?: (data: TData) => React.ReactNode;
 }
 
-function DataTableContent<TData, TValue>({
+export function DataTable<TData extends RowData>({
   columns,
   data,
   pageCount = -1,
@@ -155,7 +137,7 @@ function DataTableContent<TData, TValue>({
   getRowClassName,
   onRowClick,
   renderExpandedRow,
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<TData>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -195,7 +177,10 @@ function DataTableContent<TData, TValue>({
     }
   };
 
-  // Auto-return to previous valid page if current page becomes empty (e.g., due to deletions)
+  // Auto-return to previous valid page if current page becomes empty (e.g., due to deletions).
+  // This effect exists to push a corrected page index into state, so the compiler lint rule against
+  // setting state in an effect does not apply to it.
+  /* eslint-disable react-hooks/set-state-in-effect */
   React.useEffect(() => {
     if (isLoading || disablePagination) return;
 
@@ -249,9 +234,10 @@ function DataTableContent<TData, TValue>({
     disablePagination,
     data.length,
   ]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
-  // eslint-disable-next-line react-hooks/incompatible-library -- TanStack Table's useReactTable returns functions that cannot be memoized safely
-  const table = useReactTable({
+  const table = useTable({
+    features: dataTableFeatures,
     data,
     columns,
     state: {
@@ -270,13 +256,6 @@ function DataTableContent<TData, TValue>({
     onSortingChange: handleSortingChange,
     onColumnFiltersChange: handleColumnFiltersChange,
     onPaginationChange: handlePaginationChange,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel:
-      manualPagination || disablePagination ? undefined : getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
   });
   const hasToolbarContent = customLeftToolbar || searchKey || onRefresh;
 
@@ -453,17 +432,5 @@ function DataTableContent<TData, TValue>({
         />
       )}
     </div>
-  );
-}
-
-/* TanStack Table v8 reads Date.now() for its memo debug timings in development,
- * which Cache Components reports as an unstable value during prerender. The
- * boundary gives the dev prerender a fallback to stop at; production builds
- * never read the clock, so the full table is still prerendered. */
-export function DataTable<TData, TValue>(props: DataTableProps<TData, TValue>) {
-  return (
-    <React.Suspense fallback={<DataTableSkeleton />}>
-      <DataTableContent {...props} />
-    </React.Suspense>
   );
 }

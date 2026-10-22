@@ -1,18 +1,19 @@
 "use client";
 
 import * as React from "react";
-import { Table, flexRender } from "@tanstack/react-table";
+import { flexRender, type RowData } from "@tanstack/react-table";
 import { MoreVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { DataTableInstance } from "./data-table.features";
 
-interface DataTableMobileGridProps<TData> {
-  table: Table<TData>;
+interface DataTableMobileGridProps<TData extends RowData> {
+  table: DataTableInstance<TData>;
   /** Detail panel rendered at the foot of a card, mirroring the desktop
    *  table's expanded row. `null` for rows with nothing to expand. */
   renderExpandedRow?: (data: TData) => React.ReactNode;
 }
 
-export function DataTableMobileGrid<TData>({
+export function DataTableMobileGrid<TData extends RowData>({
   table,
   renderExpandedRow,
 }: DataTableMobileGridProps<TData>) {

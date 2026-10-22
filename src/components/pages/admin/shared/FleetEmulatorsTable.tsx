@@ -3,12 +3,11 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import type { ColumnDef } from "@tanstack/react-table";
 import { Building2, RotateCw, SearchX, Smartphone, Square, UserRound } from "lucide-react";
 import { toast } from "sonner";
 
 import { ColumnHeader } from "@/components/custom/ColumnHeader";
-import { DataTable } from "@/components/custom/data-table";
+import { DataTable, type DataTableColumnDef } from "@/components/custom/data-table";
 import { EmptyState } from "@/components/custom/EmptyState";
 import { FilterChips } from "@/components/custom/FilterChips";
 import { RowActions } from "@/components/custom/RowActions";
@@ -76,7 +75,7 @@ function FleetRowActions({ row, showOrganization }: { row: FleetRow; showOrganiz
   );
 }
 
-function columnsFor(showOrganization: boolean, showOwner: boolean): ColumnDef<FleetRow>[] {
+function columnsFor(showOrganization: boolean, showOwner: boolean): DataTableColumnDef<FleetRow>[] {
   return [
     {
       id: "emulator",
@@ -108,7 +107,7 @@ function columnsFor(showOrganization: boolean, showOwner: boolean): ColumnDef<Fl
               </Link>
             ),
             meta: { label: "Organization" },
-          } satisfies ColumnDef<FleetRow>,
+          } satisfies DataTableColumnDef<FleetRow>,
         ]
       : []),
     ...(showOwner
@@ -126,7 +125,7 @@ function columnsFor(showOrganization: boolean, showOwner: boolean): ColumnDef<Fl
               </Link>
             ),
             meta: { label: "Owner" },
-          } satisfies ColumnDef<FleetRow>,
+          } satisfies DataTableColumnDef<FleetRow>,
         ]
       : []),
     {

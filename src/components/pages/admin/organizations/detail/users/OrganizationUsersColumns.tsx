@@ -1,11 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import type { ColumnDef } from "@tanstack/react-table";
 import { Ban, Eye, UserCog, UserMinus } from "lucide-react";
 import { toast } from "sonner";
 
 import { ColumnHeader } from "@/components/custom/ColumnHeader";
+import type { DataTableColumnDef } from "@/components/custom/data-table";
 import { RowActions } from "@/components/custom/RowActions";
 import { ToneBadge } from "@/components/custom/ToneBadge";
 import { MEMBER_STATUS, ORG_ROLE } from "@/components/pages/admin/constants/status.constants";
@@ -64,7 +64,7 @@ function MemberRowActions({ member }: { member: Member }) {
   );
 }
 
-export const ORGANIZATION_USER_COLUMNS: ColumnDef<MemberRow>[] = [
+export const ORGANIZATION_USER_COLUMNS: DataTableColumnDef<MemberRow>[] = [
   {
     id: "person",
     accessorFn: (row) => row.member.name,

@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import type { ColumnDef } from "@tanstack/react-table";
 import { Ban, Eye, Layers } from "lucide-react";
 import { toast } from "sonner";
 
 import { ColumnHeader } from "@/components/custom/ColumnHeader";
+import type { DataTableColumnDef } from "@/components/custom/data-table";
 import { EntityAvatar } from "@/components/custom/EntityAvatar";
 import { PlanBadge } from "@/components/custom/PlanBadge";
 import { RowActions } from "@/components/custom/RowActions";
@@ -51,7 +51,7 @@ function OrganizationRowActions({ row }: { row: OrgRow }) {
   );
 }
 
-export const ORGANIZATION_COLUMNS: ColumnDef<OrgRow>[] = [
+export const ORGANIZATION_COLUMNS: DataTableColumnDef<OrgRow>[] = [
   {
     id: "organization",
     accessorFn: (row) => row.org.name,
@@ -116,7 +116,7 @@ export const ORGANIZATION_COLUMNS: ColumnDef<OrgRow>[] = [
   },
   {
     accessorKey: "status",
-    sortingFn: (a, b) => STATUS_ORDER[a.original.status] - STATUS_ORDER[b.original.status],
+    sortFn: (a, b) => STATUS_ORDER[a.original.status] - STATUS_ORDER[b.original.status],
     header: ({ column }) => <ColumnHeader column={column} title="Status" />,
     cell: ({ row }) => {
       const status = ORG_STATUS[row.original.status];

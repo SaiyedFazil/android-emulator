@@ -1,8 +1,9 @@
 import { useEffect, useRef } from "react";
-import { Table } from "@tanstack/react-table";
+import type { RowData } from "@tanstack/react-table";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import type { DataTableInstance } from "./data-table.features";
 import {
   Select,
   SelectContent,
@@ -11,19 +12,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-interface DataTablePaginationProps<TData> {
-  table: Table<TData>;
+interface DataTablePaginationProps<TData extends RowData> {
+  table: DataTableInstance<TData>;
   totalRows?: number;
   pageSizeOptions?: number[];
 }
 
-export function DataTablePagination<TData>({
+export function DataTablePagination<TData extends RowData>({
   table,
   totalRows: manualTotalRows,
   pageSizeOptions = [25, 50, 75, 100],
 }: DataTablePaginationProps<TData>) {
-  const pageIndex = table.getState().pagination.pageIndex;
-  const pageSize = table.getState().pagination.pageSize;
+  const pageIndex = table.state.pagination.pageIndex;
+  const pageSize = table.state.pagination.pageSize;
   const filteredRowsCount = table.getFilteredRowModel().rows.length;
   // Use passed totalRows if available (manual pagination), otherwise use filtered rows count
   const totalRows = manualTotalRows !== undefined ? manualTotalRows : filteredRowsCount;

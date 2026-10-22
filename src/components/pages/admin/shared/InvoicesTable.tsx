@@ -2,12 +2,11 @@
 
 import * as React from "react";
 import Link from "next/link";
-import type { ColumnDef } from "@tanstack/react-table";
 import { Ban, Download, Eye, Receipt, RefreshCw, SearchX, Undo2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { ColumnHeader } from "@/components/custom/ColumnHeader";
-import { DataTable } from "@/components/custom/data-table";
+import { DataTable, type DataTableColumnDef } from "@/components/custom/data-table";
 import { EmptyState } from "@/components/custom/EmptyState";
 import { FilterChips } from "@/components/custom/FilterChips";
 import { RowActions } from "@/components/custom/RowActions";
@@ -76,7 +75,7 @@ function DateCell({ iso }: { iso: string | null }) {
   );
 }
 
-function columnsFor(showOrganization: boolean): ColumnDef<Invoice>[] {
+function columnsFor(showOrganization: boolean): DataTableColumnDef<Invoice>[] {
   return [
     {
       accessorKey: "number",
@@ -105,7 +104,7 @@ function columnsFor(showOrganization: boolean): ColumnDef<Invoice>[] {
               );
             },
             meta: { label: "Organization" },
-          } satisfies ColumnDef<Invoice>,
+          } satisfies DataTableColumnDef<Invoice>,
         ]
       : []),
     {

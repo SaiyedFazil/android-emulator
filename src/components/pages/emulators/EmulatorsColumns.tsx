@@ -1,9 +1,8 @@
 "use client";
 
-import type { ColumnDef } from "@tanstack/react-table";
-
 import { StatusBadge } from "@/components/custom/StatusBadge";
 import { ColumnHeader } from "@/components/custom/ColumnHeader";
+import type { DataTableColumnDef } from "@/components/custom/data-table";
 import { CopyAddress } from "@/components/pages/emulators/components/CopyAddress";
 import { EmulatorRowActions } from "@/components/pages/emulators/components/EmulatorRowActions";
 import { formatAddress } from "@/components/pages/emulators/utils/emulator.utils";
@@ -18,7 +17,7 @@ const STATUS_ORDER: Record<EmulatorStatus, number> = {
   offline: 3,
 };
 
-export const EMULATOR_COLUMNS: ColumnDef<Emulator>[] = [
+export const EMULATOR_COLUMNS: DataTableColumnDef<Emulator>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => <ColumnHeader column={column} title="Emulator" />,
@@ -56,7 +55,7 @@ export const EMULATOR_COLUMNS: ColumnDef<Emulator>[] = [
   },
   {
     accessorKey: "status",
-    sortingFn: (a, b) => STATUS_ORDER[a.original.status] - STATUS_ORDER[b.original.status],
+    sortFn: (a, b) => STATUS_ORDER[a.original.status] - STATUS_ORDER[b.original.status],
     header: ({ column }) => <ColumnHeader column={column} title="Status" />,
     meta: { label: "Status" },
     cell: ({ row }) => <StatusBadge status={row.original.status} />,

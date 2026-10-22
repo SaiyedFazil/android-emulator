@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import type { ColumnDef } from "@tanstack/react-table";
 import { CalendarPlus, CircleX, Layers, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 
 import { ColumnHeader } from "@/components/custom/ColumnHeader";
+import type { DataTableColumnDef } from "@/components/custom/data-table";
 import { EntityAvatar } from "@/components/custom/EntityAvatar";
 import { PlanBadge } from "@/components/custom/PlanBadge";
 import { RowActions } from "@/components/custom/RowActions";
@@ -85,7 +85,7 @@ function RenewalCell({ subscription }: { subscription: Subscription }) {
   );
 }
 
-export const SUBSCRIPTION_COLUMNS: ColumnDef<SubscriptionRow>[] = [
+export const SUBSCRIPTION_COLUMNS: DataTableColumnDef<SubscriptionRow>[] = [
   {
     id: "organization",
     accessorFn: (row) => row.org.name,

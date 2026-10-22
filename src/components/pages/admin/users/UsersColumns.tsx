@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import type { ColumnDef } from "@tanstack/react-table";
 import { Ban, Building2, Eye, KeyRound } from "lucide-react";
 import { toast } from "sonner";
 
 import { ColumnHeader } from "@/components/custom/ColumnHeader";
+import type { DataTableColumnDef } from "@/components/custom/data-table";
 import { RowActions } from "@/components/custom/RowActions";
 import { ToneBadge } from "@/components/custom/ToneBadge";
 import { MEMBER_STATUS, ORG_ROLE } from "@/components/pages/admin/constants/status.constants";
@@ -65,7 +65,7 @@ function UserRowActions({ row }: { row: UserRow }) {
   );
 }
 
-export const USER_COLUMNS: ColumnDef<UserRow>[] = [
+export const USER_COLUMNS: DataTableColumnDef<UserRow>[] = [
   {
     id: "person",
     accessorFn: (row) => row.member.name,

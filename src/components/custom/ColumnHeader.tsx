@@ -1,13 +1,18 @@
-import type { Column } from "@tanstack/react-table";
+import type { RowData } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp, ChevronsUpDown } from "lucide-react";
 
-interface ColumnHeaderProps<TData, TValue> {
-  column: Column<TData, TValue>;
+import type { DataTableColumn } from "@/components/custom/data-table";
+
+interface ColumnHeaderProps<TData extends RowData, TValue> {
+  column: DataTableColumn<TData, TValue>;
   /** Also read by the data-table's mobile card grid as the field label. */
   title: string;
 }
 
-export function ColumnHeader<TData, TValue>({ column, title }: ColumnHeaderProps<TData, TValue>) {
+export function ColumnHeader<TData extends RowData, TValue>({
+  column,
+  title,
+}: ColumnHeaderProps<TData, TValue>) {
   if (!column.getCanSort()) return <span>{title}</span>;
 
   const sorted = column.getIsSorted();

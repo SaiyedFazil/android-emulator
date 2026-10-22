@@ -41,8 +41,9 @@ Run lint, format:check, typecheck, test and build before calling work done.
 
 ## Gotchas
 
-- The data-table (`components/custom/data-table`) is wrapped in `<Suspense>`: TanStack Table v8
-  reads `Date.now()` for memo debugging in development, which Cache Components reports.
+- The data-table (`components/custom/data-table`) is TanStack Table v9. Its features, row models,
+  sort/filter registries and column `meta` type live in `data-table.features.ts`; column files type
+  themselves with `DataTableColumnDef<Row>` (not `ColumnDef`), and custom comparators are `sortFn`.
 - Mobile data-table cards read field labels from `columnDef.meta.label`.
 - Profile and Settings sections use `components/custom/SectionTabs` (vertical nav from `lg`,
   selection in the URL hash). Pass `icon` as an element (`<Bell />`), not the component —

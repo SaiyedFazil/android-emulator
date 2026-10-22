@@ -1,10 +1,10 @@
 "use client";
 
-import type { ColumnDef } from "@tanstack/react-table";
 import { MailPlus, ShieldCheck, UserMinus } from "lucide-react";
 import { toast } from "sonner";
 
 import { ColumnHeader } from "@/components/custom/ColumnHeader";
+import type { DataTableColumnDef } from "@/components/custom/data-table";
 import { EntityAvatar } from "@/components/custom/EntityAvatar";
 import { RowActions } from "@/components/custom/RowActions";
 import { ToneBadge } from "@/components/custom/ToneBadge";
@@ -45,7 +45,7 @@ function TeamRowActions({ admin }: { admin: AdminMember }) {
   );
 }
 
-export const TEAM_COLUMNS: ColumnDef<AdminMember>[] = [
+export const TEAM_COLUMNS: DataTableColumnDef<AdminMember>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => <ColumnHeader column={column} title="Admin" />,
