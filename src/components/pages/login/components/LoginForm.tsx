@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { demoRoleFor, safeNext } from "@/lib/auth/roles";
 import { cn } from "@/lib/utils";
 
 /** The bordered box holds the icon, the input and (for the password) the eye button. */
@@ -50,27 +51,31 @@ export function LoginForm() {
     if (missing[field]) setMissing((m) => ({ ...m, [field]: false }));
   };
 
-  // TODO(auth): post the credentials to the sign-in endpoint and keep the session (a persistent
-  // one when "Remember me" is ticked). Until then any filled-in form continues to the dashboard.
+  // TODO(auth): post the credentials to the sign-in endpoint, keep the session (a persistent one
+  // when "Remember me" is ticked) and route by its role. Until then any filled-in form continues,
+  // and an identifier containing "admin" opens the admin console (`demoRoleFor`).
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (submitting) return;
     const data = new FormData(event.currentTarget);
-    const next = {
-      identifier: !String(data.get("identifier") ?? "").trim(),
-      password: !String(data.get("password") ?? ""),
-    };
+    const identifier = String(data.get("identifier") ?? "").trim();
+    const next = { identifier: !identifier, password: !String(data.get("password") ?? "") };
     setMissing(next);
     if (next.identifier || next.password) return;
     setSubmitting(true);
-    redirect.current = window.setTimeout(() => router.push("/dashboard"), 1200);
+    // Read `?next=` at submit time: `useSearchParams` would need a Suspense boundary.
+    const target = safeNext(
+      demoRoleFor(identifier),
+      new URLSearchParams(window.location.search).get("next")
+    );
+    redirect.current = window.setTimeout(() => router.push(target), 1200);
   };
 
   return (
     <div className="flex w-full max-w-sm flex-col gap-8">
       <div className="flex flex-col gap-2">
         <Reveal delay={50}>
-          <h1 className="text-[26px] leading-tight font-semibold tracking-[-0.025em] lg:text-3xl">
+          <h1 className="text-[26px] leading-tight font-semibold tracking-tight lg:text-3xl">
             Welcome back
           </h1>
         </Reveal>
@@ -96,7 +101,7 @@ export function LoginForm() {
                 role="alert"
                 className="mb-4.5 flex items-start gap-2.5 rounded-[10px] border border-destructive/30 bg-destructive/10 px-3.5 py-3 text-[13.5px] leading-snug text-destructive"
               >
-                <CircleAlert className="mt-px size-[18px] shrink-0" />
+                <CircleAlert className="mt-px size-4.5 shrink-0" />
                 <span>
                   <span className="font-semibold">Missing details.</span> Enter your email or
                   username and your password.
@@ -112,7 +117,7 @@ export function LoginForm() {
               Email or username
             </Label>
             <div className={FIELD_CLASS}>
-              <UserRound className="size-[18px] shrink-0" />
+              <UserRound className="size-4.5 shrink-0" />
               <Input
                 id="identifier"
                 name="identifier"
@@ -140,7 +145,7 @@ export function LoginForm() {
               </button>
             </div>
             <div className={cn(FIELD_CLASS, "pr-1")}>
-              <LockKeyhole className="size-[18px] shrink-0" />
+              <LockKeyhole className="size-4.5 shrink-0" />
               <Input
                 id="password"
                 name="password"
@@ -170,11 +175,7 @@ export function LoginForm() {
                     transition={{ duration: 0.15 }}
                     className="flex"
                   >
-                    {showPassword ? (
-                      <EyeOff className="size-[18px]" />
-                    ) : (
-                      <Eye className="size-[18px]" />
-                    )}
+                    {showPassword ? <EyeOff className="size-4.5" /> : <Eye className="size-4.5" />}
                   </motion.span>
                 </AnimatePresence>
               </Button>
@@ -182,7 +183,7 @@ export function LoginForm() {
           </Reveal>
 
           <Reveal delay={250} className="flex items-center gap-2.5">
-            <Checkbox id="remember" name="remember" className="size-[18px] rounded-[5px]" />
+            <Checkbox id="remember" name="remember" className="size-4.5 rounded-[5px]" />
             <Label htmlFor="remember" className="font-normal">
               Remember me
             </Label>
@@ -198,13 +199,13 @@ export function LoginForm() {
               <AnimatePresence mode="wait" initial={false}>
                 {submitting ? (
                   <motion.span key="busy" {...SWAP} className="flex items-center gap-2.5">
-                    <LoaderCircle className="size-[17px] animate-spin" />
+                    <LoaderCircle className="size-4.25 animate-spin" />
                     Signing in…
                   </motion.span>
                 ) : (
                   <motion.span key="idle" {...SWAP} className="flex items-center gap-2">
                     Sign in
-                    <ArrowRight className="size-[17px] transition-transform group-hover/submit:translate-x-0.5" />
+                    <ArrowRight className="size-4.25 transition-transform group-hover/submit:translate-x-0.5" />
                   </motion.span>
                 )}
               </AnimatePresence>
@@ -217,7 +218,7 @@ export function LoginForm() {
         delay={380}
         className="flex items-center justify-center gap-2 border-t pt-5.5 text-[13px] text-muted-foreground"
       >
-        <ShieldCheck className="size-[15px] shrink-0 text-primary" />
+        <ShieldCheck className="size-3.75 shrink-0 text-primary" />
         <p>
           <span className="font-medium text-foreground">Need access?</span> Contact your
           administrator.

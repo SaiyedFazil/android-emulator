@@ -4,7 +4,7 @@ import { DashboardActions } from "@/components/pages/dashboard/components/Dashbo
 import { RecentEmulators } from "@/components/pages/dashboard/components/RecentEmulators";
 import { ResourceUsage } from "@/components/pages/dashboard/components/ResourceUsage";
 import { SessionsChart } from "@/components/pages/dashboard/components/SessionsChart";
-import { StatCard } from "@/components/pages/dashboard/components/StatCard";
+import { StatCard } from "@/components/custom/StatCard";
 import { VersionBreakdown } from "@/components/pages/dashboard/components/VersionBreakdown";
 import { EMULATORS } from "@/components/pages/emulators/constants/emulator.constants";
 import { countByStatus } from "@/components/pages/emulators/utils/emulator.utils";

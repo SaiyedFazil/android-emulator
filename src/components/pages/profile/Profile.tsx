@@ -5,37 +5,38 @@ import { PersonalDetailsForm } from "@/components/pages/profile/components/Perso
 import { ProfileHeader } from "@/components/pages/profile/components/ProfileHeader";
 import { SecurityCard } from "@/components/pages/profile/components/SecurityCard";
 import { SignInActivity } from "@/components/pages/profile/components/SignInActivity";
-import { PROFILE, SIGN_INS } from "@/components/pages/profile/constants/profile.constants";
+import type { SignInEvent, UserProfile } from "@/types/profile.types";
 
-const TABS: SectionTab[] = [
-  {
-    value: "personal",
-    label: "Personal details",
-    description: "Name, email and time zone",
-    icon: <UserRound />,
-    content: <PersonalDetailsForm profile={PROFILE} />,
-  },
-  {
-    value: "security",
-    label: "Password & security",
-    description: "Password and two-factor",
-    icon: <ShieldCheck />,
-    content: <SecurityCard passwordChangedAt={PROFILE.passwordChangedAt} />,
-  },
-  {
-    value: "devices",
-    label: "Devices",
-    description: "Where you're signed in",
-    icon: <MonitorSmartphone />,
-    content: <SignInActivity events={SIGN_INS} />,
-  },
-];
+/** The signed-in person's own account — used by the console and the admin console alike. */
+export function Profile({ profile, signIns }: { profile: UserProfile; signIns: SignInEvent[] }) {
+  const tabs: SectionTab[] = [
+    {
+      value: "personal",
+      label: "Personal details",
+      description: "Name, email and time zone",
+      icon: <UserRound />,
+      content: <PersonalDetailsForm profile={profile} />,
+    },
+    {
+      value: "security",
+      label: "Password & security",
+      description: "Password and two-factor",
+      icon: <ShieldCheck />,
+      content: <SecurityCard passwordChangedAt={profile.passwordChangedAt} />,
+    },
+    {
+      value: "devices",
+      label: "Devices",
+      description: "Where you're signed in",
+      icon: <MonitorSmartphone />,
+      content: <SignInActivity events={signIns} />,
+    },
+  ];
 
-export function Profile() {
   return (
     <div className="flex flex-col gap-6">
-      <ProfileHeader profile={PROFILE} />
-      <SectionTabs tabs={TABS} label="Profile sections" />
+      <ProfileHeader profile={profile} />
+      <SectionTabs tabs={tabs} label="Profile sections" />
     </div>
   );
 }

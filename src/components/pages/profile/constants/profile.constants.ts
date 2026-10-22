@@ -3,10 +3,10 @@ import type { SignInEvent, UserProfile } from "@/types/profile.types";
 
 // TODO(auth): replace with the signed-in user's profile.
 export const PROFILE: UserProfile = {
-  firstName: "Admin",
-  lastName: "User",
-  email: "admin@example.com",
-  role: "Administrator",
+  firstName: "Priya",
+  lastName: "Sharma",
+  email: "priya@northwind.dev",
+  roleLabel: "Member · Northwind Labs",
   phone: "",
   timezone: "Asia/Kolkata",
   joinedAt: "2026-03-02T10:00:00.000Z",

@@ -33,7 +33,7 @@ export function ProfileHeader({ profile }: { profile: UserProfile }) {
             </h1>
             <Badge variant="secondary" className="gap-1 bg-accent text-accent-foreground">
               <ShieldCheck />
-              {profile.role}
+              {profile.roleLabel}
             </Badge>
           </div>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-muted-foreground">

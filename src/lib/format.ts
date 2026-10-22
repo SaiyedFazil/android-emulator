@@ -28,3 +28,41 @@ const dateTime = new Intl.DateTimeFormat("en", {
 export function formatDateTime(iso: string): string {
   return `${dateTime.format(new Date(iso))} UTC`;
 }
+
+const date = new Intl.DateTimeFormat("en", { dateStyle: "medium", timeZone: "UTC" });
+
+/** "Oct 19, 2026" — the UTC calendar date. */
+export function formatDate(iso: string): string {
+  return date.format(new Date(iso));
+}
+
+// TODO(api): a single currency until billing supports more.
+export const CURRENCY = "USD";
+
+const money = (fractionDigits: number) =>
+  new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: CURRENCY,
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits,
+  });
+const wholeDollars = money(0);
+const withCents = money(2);
+const compactMoney = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: CURRENCY,
+  notation: "compact",
+  maximumFractionDigits: 1,
+});
+
+/** Amounts are integer cents: 4900 → "$49", 4950 → "$49.50", compact 1290000 → "$12.9K". */
+export function formatCurrency(cents: number, options: { compact?: boolean } = {}): string {
+  const dollars = cents / 100;
+  if (options.compact) return compactMoney.format(dollars);
+  return (cents % 100 === 0 ? wholeDollars : withCents).format(dollars);
+}
+
+/** A plan price; `null` means it is negotiated per customer. */
+export function formatPrice(cents: number | null): string {
+  return cents === null ? "Custom" : formatCurrency(cents);
+}

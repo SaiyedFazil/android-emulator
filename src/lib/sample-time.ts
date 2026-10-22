@@ -6,3 +6,15 @@ export const SAMPLE_NOW = new Date("2026-10-19T09:00:00.000Z");
 export function minutesAgo(minutes: number): string {
   return new Date(SAMPLE_NOW.getTime() - minutes * 60_000).toISOString();
 }
+
+const DAY_MS = 86_400_000;
+
+/** ISO timestamp `days` before SAMPLE_NOW. */
+export function daysAgo(days: number): string {
+  return new Date(SAMPLE_NOW.getTime() - days * DAY_MS).toISOString();
+}
+
+/** ISO timestamp `days` after SAMPLE_NOW — renewals, trial ends, due dates. */
+export function daysFromNow(days: number): string {
+  return new Date(SAMPLE_NOW.getTime() + days * DAY_MS).toISOString();
+}

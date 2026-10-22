@@ -31,9 +31,9 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { APP_NAME, APP_TAGLINE } from "@/lib/brand";
-import { CURRENT_USER, HOST_CAPACITY, NAV_GROUPS } from "@/lib/constants";
+import { APP_NAME } from "@/lib/brand";
 import { cn } from "@/lib/utils";
+import type { ShellConfig } from "@/types/nav.types";
 
 /* Collapsed ("icon") mode is styled through `group-data-[collapsible=icon]:` — the rail is 4rem
  * wide and every button becomes a centred 40px square with its text hidden. */
@@ -51,11 +51,17 @@ const NAV_BUTTON_CLASS = cn(
   ICON_BUTTON_CLASS
 );
 
-/** Host capacity as a ring — the collapsed stand-in for the capacity card. */
-function CapacityRing({ percent }: { percent: number }) {
+/** Capacity as a ring — the collapsed stand-in for the capacity card. */
+function CapacityRing({
+  percent,
+  capacity,
+}: {
+  percent: number;
+  capacity: ShellConfig["capacity"];
+}) {
   const radius = 15;
   const circumference = 2 * Math.PI * radius;
-  const label = `Host capacity ${percent}%, ${HOST_CAPACITY.used} of ${HOST_CAPACITY.total} slots in use`;
+  const label = `${capacity.label} ${percent}%, ${capacity.used} of ${capacity.total} slots in use`;
 
   return (
     <Tooltip>
@@ -100,19 +106,22 @@ function CapacityRing({ percent }: { percent: number }) {
         </div>
       </TooltipTrigger>
       <TooltipContent side="right" sideOffset={10} className="flex-col items-start gap-0.5">
-        <span className="font-medium">Host capacity {percent}%</span>
+        <span className="font-medium">
+          {capacity.label} {percent}%
+        </span>
         <span className="opacity-80">
-          {HOST_CAPACITY.used} of {HOST_CAPACITY.total} slots in use
+          {capacity.used} of {capacity.total} slots in use
         </span>
       </TooltipContent>
     </Tooltip>
   );
 }
 
-export function AppSidebar() {
+export function AppSidebar({ config }: { config: ShellConfig }) {
   const pathname = usePathname();
   const { isMobile, setOpenMobile } = useSidebar();
-  const capacity = Math.round((HOST_CAPACITY.used / HOST_CAPACITY.total) * 100);
+  const { capacity: slots, user } = config;
+  const capacity = Math.round((slots.used / slots.total) * 100);
 
   // The mobile drawer stays open after a link click unless we close it.
   const closeOnMobile = () => {
@@ -130,7 +139,7 @@ export function AppSidebar() {
               tooltip={APP_NAME}
               className={cn("hover:bg-transparent active:bg-transparent", ICON_BUTTON_CLASS)}
             >
-              <Link href="/dashboard" onClick={closeOnMobile}>
+              <Link href={config.homeHref} onClick={closeOnMobile}>
                 <span className="flex size-8 shrink-0 items-center justify-center rounded-[9px] bg-primary text-primary-foreground group-data-[collapsible=icon]:size-9">
                   <Smartphone className="size-4.5" />
                 </span>
@@ -138,7 +147,15 @@ export function AppSidebar() {
                   <span className="truncate text-[15px] font-semibold tracking-tight text-sidebar-accent-foreground">
                     {APP_NAME}
                   </span>
-                  <span className="truncate text-xs text-sidebar-muted">{APP_TAGLINE}</span>
+                  {/* The badge rides on the tagline row: beside the name it would truncate it. */}
+                  <span className="flex min-w-0 items-center gap-1.5">
+                    {config.badge ? (
+                      <span className="shrink-0 rounded-[5px] border border-sidebar-ring/40 bg-sidebar-ring/10 px-1.5 py-px text-[10px] leading-4 font-semibold tracking-wide text-sidebar-ring uppercase">
+                        {config.badge}
+                      </span>
+                    ) : null}
+                    <span className="truncate text-xs text-sidebar-muted">{config.tagline}</span>
+                  </span>
                 </span>
               </Link>
             </SidebarMenuButton>
@@ -147,7 +164,7 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent className="px-1.5 group-data-[collapsible=icon]:px-0">
-        {NAV_GROUPS.map((group, index) => (
+        {config.nav.map((group, index) => (
           <Fragment key={group.label}>
             {/* Group labels fade out when collapsed; a short rule keeps the groups apart. */}
             {index > 0 ? (
@@ -167,7 +184,7 @@ export function AppSidebar() {
                       className={NAV_BUTTON_CLASS}
                     >
                       <Link href={item.href} onClick={closeOnMobile}>
-                        <item.icon />
+                        {item.icon}
                         <span className={LABEL_CLASS}>{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
@@ -187,12 +204,12 @@ export function AppSidebar() {
       <SidebarFooter className="gap-3 px-3 pb-4 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:px-2">
         <div className="flex flex-col gap-2 rounded-[10px] border border-sidebar-border p-3 group-data-[collapsible=icon]:hidden">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-sidebar-foreground">Host capacity</span>
+            <span className="text-sidebar-foreground">{slots.label}</span>
             <span className="font-mono text-sidebar-accent-foreground">{capacity}%</span>
           </div>
           <div
             role="progressbar"
-            aria-label="Host capacity"
+            aria-label={slots.label}
             aria-valuenow={capacity}
             aria-valuemin={0}
             aria-valuemax={100}
@@ -204,10 +221,10 @@ export function AppSidebar() {
             />
           </div>
           <span className="text-xs text-sidebar-muted">
-            {HOST_CAPACITY.used} of {HOST_CAPACITY.total} slots in use
+            {slots.used} of {slots.total} slots in use
           </span>
         </div>
-        <CapacityRing percent={capacity} />
+        <CapacityRing percent={capacity} capacity={slots} />
 
         <SidebarMenu className={MENU_CLASS}>
           <SidebarMenuItem>
@@ -215,12 +232,12 @@ export function AppSidebar() {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton
                   size="lg"
-                  tooltip={CURRENT_USER.name}
+                  tooltip={user.name}
                   className={cn("data-[state=open]:bg-sidebar-accent", ICON_BUTTON_CLASS)}
                 >
                   <Avatar className="size-8 rounded-full">
                     <AvatarFallback className="bg-sidebar-accent text-xs font-semibold text-sidebar-accent-foreground">
-                      {CURRENT_USER.initials}
+                      {user.initials}
                     </AvatarFallback>
                   </Avatar>
                   <span
@@ -230,11 +247,9 @@ export function AppSidebar() {
                     )}
                   >
                     <span className="truncate text-[13px] font-medium text-sidebar-accent-foreground">
-                      {CURRENT_USER.name}
+                      {user.name}
                     </span>
-                    <span className="truncate text-xs text-sidebar-muted">
-                      {CURRENT_USER.email}
-                    </span>
+                    <span className="truncate text-xs text-sidebar-muted">{user.email}</span>
                   </span>
                   <ChevronsUpDown className="ml-auto text-sidebar-muted group-data-[collapsible=icon]:hidden" />
                 </SidebarMenuButton>
@@ -246,21 +261,19 @@ export function AppSidebar() {
                 className="w-56"
               >
                 <DropdownMenuLabel className="flex flex-col">
-                  <span className="text-sm font-medium text-foreground">{CURRENT_USER.name}</span>
-                  <span className="text-xs font-normal text-muted-foreground">
-                    {CURRENT_USER.email}
-                  </span>
+                  <span className="text-sm font-medium text-foreground">{user.name}</span>
+                  <span className="text-xs font-normal text-muted-foreground">{user.email}</span>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
                   <DropdownMenuItem asChild className="cursor-pointer">
-                    <Link href="/profile" onClick={closeOnMobile}>
+                    <Link href={config.profileHref} onClick={closeOnMobile}>
                       <UserRound />
                       Profile
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild className="cursor-pointer">
-                    <Link href="/settings" onClick={closeOnMobile}>
+                    <Link href={config.settingsHref} onClick={closeOnMobile}>
                       <Settings />
                       Settings
                     </Link>

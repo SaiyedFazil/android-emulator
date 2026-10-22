@@ -6,12 +6,20 @@ import { formatDateTime, formatRelativeTime } from "@/lib/format";
 import { SAMPLE_NOW } from "@/lib/sample-time";
 import type { SignInEvent } from "@/types/profile.types";
 
-export function SignInActivity({ events }: { events: SignInEvent[] }) {
+export function SignInActivity({
+  events,
+  title = "Devices",
+  description = "Where your account has signed in recently.",
+}: {
+  events: SignInEvent[];
+  title?: string;
+  description?: string;
+}) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Devices</CardTitle>
-        <CardDescription>Where your account has signed in recently.</CardDescription>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>
         <ul className="flex flex-col divide-y">

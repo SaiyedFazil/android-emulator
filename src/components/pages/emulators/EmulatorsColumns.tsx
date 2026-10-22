@@ -3,7 +3,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
 import { StatusBadge } from "@/components/custom/StatusBadge";
-import { ColumnHeader } from "@/components/pages/emulators/components/ColumnHeader";
+import { ColumnHeader } from "@/components/custom/ColumnHeader";
 import { CopyAddress } from "@/components/pages/emulators/components/CopyAddress";
 import { EmulatorRowActions } from "@/components/pages/emulators/components/EmulatorRowActions";
 import { formatAddress } from "@/components/pages/emulators/utils/emulator.utils";
@@ -23,11 +23,11 @@ export const EMULATOR_COLUMNS: ColumnDef<Emulator>[] = [
     accessorKey: "name",
     header: ({ column }) => <ColumnHeader column={column} title="Emulator" />,
     cell: ({ row }) => (
-      <div className="flex max-w-[260px] min-w-0 flex-col">
+      <div className="flex max-w-65 min-w-0 flex-col">
         <span className="truncate font-medium" title={row.original.name}>
           {row.original.name}
         </span>
-        <span className="truncate font-mono text-[11px] text-muted-foreground [[data-card-header]_&]:text-current [[data-card-header]_&]:opacity-75">
+        <span className="truncate font-mono text-[11px] text-muted-foreground in-data-card-header:text-current in-data-card-header:opacity-75">
           {row.original.serial}
         </span>
       </div>

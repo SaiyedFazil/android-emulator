@@ -34,6 +34,9 @@
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
 
+  --color-series-1: var(--series-1);
+  --color-series-2: var(--series-2);
+
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-muted: var(--sidebar-muted);
@@ -165,6 +168,10 @@
   --chart-4: #5b6270;
   --chart-5: #99f6e4;
 
+  /* Two-series charts: teal + orange, checked with the dataviz palette validator (light). */
+  --series-1: #0d9488;
+  --series-2: #eb6834;
+
   /* The sidebar stays graphite in both modes. */
   --sidebar: #111318;
   --sidebar-foreground: #a1a7b3;
@@ -222,6 +229,9 @@
   --chart-3: #2dd4bf;
   --chart-4: #9aa1ae;
   --chart-5: #115e59;
+
+  --series-1: #11a898;
+  --series-2: #d95926;
 
   --sidebar: #0f1115;
   --sidebar-foreground: #a1a7b3;
