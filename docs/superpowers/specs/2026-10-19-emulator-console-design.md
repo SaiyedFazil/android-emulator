@@ -119,7 +119,7 @@ Conventions: `@/*` → `src/*`; components PascalCase; hooks kebab-case; static 
 
 ## Calls made without asking (check these)
 
-- Package manager **npm**; dev server on the default port 3000.
+- Package manager **npm**; dev server on port 5000 (`next dev --port 5000`).
 - App name **"Emulator Console"** — a generic placeholder until the real name is decided; it lives in one constant (`src/lib/brand.ts`) so the rename is one line. No company name in the UI.
 - The project gets a git repository (initialised by create-next-app) but nothing is committed
   unless asked.

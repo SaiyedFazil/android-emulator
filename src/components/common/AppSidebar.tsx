@@ -253,13 +253,13 @@ export function AppSidebar() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <DropdownMenuItem asChild>
+                  <DropdownMenuItem asChild className="cursor-pointer">
                     <Link href="/profile" onClick={closeOnMobile}>
                       <UserRound />
                       Profile
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
+                  <DropdownMenuItem asChild className="cursor-pointer">
                     <Link href="/settings" onClick={closeOnMobile}>
                       <Settings />
                       Settings
@@ -268,7 +268,7 @@ export function AppSidebar() {
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 {/* TODO(auth): end the session before leaving for the sign-in page. */}
-                <DropdownMenuItem asChild>
+                <DropdownMenuItem asChild className="cursor-pointer">
                   <Link href="/login" onClick={closeOnMobile}>
                     <LogOut />
                     Sign out

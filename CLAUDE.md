@@ -12,7 +12,7 @@ Android emulators. Currently static: no API, no auth. Design direction "Graphite
 
 ## Commands
 
-`npm run dev` (port 3000) · `npm run build` · `npm run lint` · `npm run format:check` ·
+`npm run dev` (port 5000) · `npm run build` · `npm run lint` · `npm run format:check` ·
 `npm run typecheck`
 
 Run lint, format:check, typecheck and build before calling work done.

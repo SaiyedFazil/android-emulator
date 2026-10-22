@@ -19,7 +19,7 @@
 - Status colours: Running green, Booting amber, Stopped grey, Offline red — always with a text label.
 - No hard-coded hex/`bg-white` in components; colours come from theme tokens only.
 - Text contrast ≥ 4.5:1 in both modes.
-- Dev server on default port 3000. npm only.
+- Dev server on port 5000 (`next dev --port 5000`). npm only.
 - Folder layout mirrors `clari-t-license-frontend` (structure only — copy no code or config from it).
 - Git: repository may exist; **do not commit** (user's instruction). Replace every "Commit" step with nothing.
 - `@tanstack/react-table` pinned to `^8.21.3` — the copied data-table is written against the v8 API (v9 changed it).
@@ -122,7 +122,7 @@ src/
 - [ ] **Step 2: Navbar.** 64px, `bg-card`, bottom border: `SidebarTrigger`, vertical separator, `AppBreadcrumb` (`Overview / Dashboard` from `NAV_GROUPS`), spacer, search input with `Ctrl K` kbd (hidden below `md`, icon button instead), `ThemeToggle`, notifications icon button with red dot. All icon buttons have `aria-label`.
 - [ ] **Step 3: ThemeToggle.** Uses `useTheme().resolvedTheme`; renders a neutral placeholder until mounted (no hydration mismatch); toggles light ↔ dark; Sun/Moon icon.
 - [ ] **Step 4: Main area.** `SidebarInset` → navbar + `<main className="mx-auto w-full max-w-310 p-4 md:p-7">`.
-- [ ] **Step 5: Verify.** Gate passes. `npm run dev`; `curl -s -o /dev/null -w "%{http_code}" localhost:3000/<route>` → 200 for all four routes, `/` → 307 to `/dashboard`. In the browser: collapse/expand works, drawer at 375px, dark mode reload has no flash and no console hydration warning.
+- [ ] **Step 5: Verify.** Gate passes. `npm run dev`; `curl -s -o /dev/null -w "%{http_code}" localhost:5000/<route>` → 200 for all four routes, `/` → 307 to `/dashboard`. In the browser: collapse/expand works, drawer at 375px, dark mode reload has no flash and no console hydration warning.
 
 ### Task 4: Shared custom components and the data-table
 
