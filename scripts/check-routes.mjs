@@ -18,9 +18,11 @@ const ROUTES = [
   ["/admin/organizations/org_northwind", 200, "Current plan"],
   ["/admin/organizations/org_northwind/users", 200, "priya.sharma@northwind.dev"],
   ["/admin/organizations/org_helix", 200, "Over limit"],
-  // {nonce} makes every run a first visit: a cached 404 must not hide a first-hit 200.
-  ["/admin/organizations/missing-{nonce}", 404],
-  ["/admin/organizations/missing-{nonce}/users", 404],
+  // Detail routes are dynamic: an unknown id streams the admin shell first, so the not-found page
+  // arrives with status 200 and noindex. {nonce} makes every run a first visit.
+  ["/admin/organizations/missing-{nonce}", 200, "This page could not be found."],
+  ["/admin/organizations/missing-{nonce}", 200, 'content="noindex"'],
+  ["/admin/organizations/missing-{nonce}/users", 200, "This page could not be found."],
   ["/admin/organizations/org_northwind/emulators", 200, "emulator-5554"],
   ["/admin/organizations/org_quartz/emulators", 200, "No emulators yet"],
   ["/admin/organizations/org_quartz/billing", 200, "No invoices yet"],
@@ -29,7 +31,7 @@ const ROUTES = [
   ["/admin/users", 200, "daniel.okafor@northwind.dev"],
   ["/admin/users/usr_priya", 200, "Sign out everywhere"],
   ["/admin/users/usr_priya", 200, "priya.sharma@northwind.dev"],
-  ["/admin/users/missing-{nonce}", 404],
+  ["/admin/users/missing-{nonce}", 200, "This page could not be found."],
   ["/admin/plans", 200, "Concurrent emulators"],
   ["/admin/plans", 200, "Custom"],
   ["/admin/subscriptions", 200, "Past due"],

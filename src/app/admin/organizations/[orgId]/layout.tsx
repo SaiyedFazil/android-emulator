@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 
 import { RoutedTabs } from "@/components/custom/RoutedTabs";
-import { ORGANIZATIONS } from "@/components/pages/admin/organizations/constants/organization.constants";
 import { OrganizationHeader } from "@/components/pages/admin/organizations/detail/OrganizationHeader";
 import {
   emulatorsOf,
@@ -10,15 +9,11 @@ import {
   membersOf,
 } from "@/components/pages/admin/utils/admin.selectors";
 
-// The first visit to an unlisted id must wait for the full render: served from the App Shell, it
-// would stream with a 200 before notFound() runs. (`dynamicParams` isn't available with Cache
-// Components.)
-export const ensureStatic = "navigation";
-
-// Prerender every known organization; unknown ids reach notFound() at request time.
-export function generateStaticParams() {
-  return ORGANIZATIONS.map((org) => ({ orgId: org.id }));
-}
+// A dynamic route: nothing is prerendered per organization; each id renders on request, ready for
+// the API to supply it. Params are request data here, and `instant = false` lets this layout read
+// them without a Suspense boundary. An unknown id shows the not-found page, with status 200 and
+// `noindex` because the admin shell has already streamed (see CLAUDE.md).
+export const instant = false;
 
 /** Header and tab bar shared by an organization's tabs; each tab is its own page below. */
 export default async function OrganizationLayout({

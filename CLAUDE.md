@@ -57,11 +57,12 @@ Run lint, format:check, typecheck, test and build before calling work done.
   are CSS (`Reveal`, tw-animate-css) so nothing is server-rendered hidden until hydration; Motion
   (`motion/react`) is only for interactive pieces (terminal lines, alert, icon swaps). Ambient
   loops are `--animate-*` keyframes in `globals.css`.
-- Admin detail routes (`admin/organizations/[orgId]`, `admin/users/[userId]`) set
-  `ensureStatic = "navigation"` so an unknown id returns a real 404 on its first visit (`dynamicParams`
-  isn’t available with Cache Components). That level forbids `cookies()`/`headers()` in every layout
-  above them, so admin auth belongs in `proxy.ts` and per-action `requireRole()`, never in
-  `admin/layout.tsx`.
+- Admin detail routes (`admin/organizations/[orgId]/**`, `admin/users/[userId]`) are dynamic: no
+  `generateStaticParams`, so nothing is prerendered per id and each id renders on request.
+  `instant = false` lets them read params without a Suspense boundary. The admin App Shell streams
+  first, so an unknown id gets the not-found page with status 200 and `noindex` (a soft 404 —
+  fine behind sign-in). For a hard 404, reject unknown ids in `proxy.ts` before render; adding
+  `generateStaticParams` back would prerender every id again.
 - Tests (`*.test.mjs`) run on Node’s built-in runner; `scripts/test-alias.mjs` resolves the `@/`
   alias. Only `.ts` modules can be loaded (Node strips types but can’t run JSX).
 
