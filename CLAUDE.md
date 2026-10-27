@@ -10,6 +10,23 @@ A single Next.js 16 app (App Router, `cacheComponents` + `partialPrefetching` on
 Android emulators. Currently static: no API, no auth. Design direction "Graphite & Teal"
 (spec: `docs/superpowers/specs/2026-10-19-emulator-console-design.md`).
 
+## Backend integration
+
+The NestJS backend is `../emulator-backend`. Its design
+(`../emulator-backend/docs/superpowers/specs/2026-10-27-backend-api-and-auth-design.md`) is the
+reference for wiring pages to the API, phase by phase, each phase with its frontend part:
+§6.4 auth behaviour, §8 endpoints, §10 frontend integration, §11 phases.
+
+- The browser calls the API directly with `Authorization: Bearer`; the frontend itself stores the
+  tokens in the `access_token` / `refresh_token` cookies.
+- API ids are uuids (`id: string`). API enum values are `UPPER_SNAKE_CASE` (`"ACTIVE"`,
+  `"ORGANIZATION_ADMIN"`): the lowercase unions in `src/types/` change to them as each area is
+  wired, and screens show labels from label maps, never raw values.
+- Theme moves to a `theme` cookie (Phase 5); language and density are being removed.
+- Stay static until their phase (keep sample data and `TODO(api)`): billing, subscriptions,
+  invoices, hosts, emulators, the console dashboard, notifications and search, admin Settings, and
+  the Audit log.
+
 ## Commands
 
 `npm run dev` (port 5000) · `npm run build` · `npm run lint` · `npm run format:check` ·
