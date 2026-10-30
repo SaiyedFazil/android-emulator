@@ -1,12 +1,17 @@
 /**
- * Who may open which part of the app. Pure functions with no imports, shared by the sign-in
- * form today and by `proxy.ts` and the Data Access Layer once sessions exist.
+ * Who may open which part of the app. Pure functions with no runtime imports, shared by
+ * `proxy.ts`, the sign-in form and the API client.
  */
+import type { ApiRole } from "@/types/auth.types";
 
+/** The frontend's two areas' audiences; not API roles (see `areaRoleOf`). */
 export type Role = "user" | "admin";
-export type Area = "public" | "console" | "admin";
+export type Area = "public" | "auth-flow" | "console" | "admin";
 
 export const LOGIN_PATH = "/login";
+
+/** Pages reached from an emailed link: open whether or not someone is signed in. */
+export const AUTH_FLOW_PATHS = ["/forgot-password", "/reset-password", "/accept-invite"];
 
 export const ROLE_HOME: Record<Role, string> = {
   user: "/dashboard",
@@ -15,22 +20,33 @@ export const ROLE_HOME: Record<Role, string> = {
 
 const ROLE_AREA: Record<Role, Area> = { user: "console", admin: "admin" };
 
+/** Platform staff use the admin area; organization users the console. */
+export function areaRoleOf(role: ApiRole): Role {
+  return role === "OWNER" || role === "ADMIN" || role === "SUPPORT" ? "admin" : "user";
+}
+
 export function areaOf(pathname: string): Area {
   if (pathname === LOGIN_PATH) return "public";
+  if (AUTH_FLOW_PATHS.includes(pathname)) return "auth-flow";
   if (pathname === "/admin" || pathname.startsWith("/admin/")) return "admin";
   return "console";
 }
 
-/** Signed out → sign in first; signed in → only your own area (and never back to `/login`). */
+/**
+ * Signed out → sign in first (coming back to this page); signed in → only your own area, never
+ * back to `/login`. The auth-flow pages are open to everyone.
+ */
 export function resolveAccess(
   role: Role | null,
-  pathname: string
+  pathname: string,
+  search = ""
 ): { allow: true } | { redirect: string } {
   const area = areaOf(pathname);
+  if (area === "auth-flow") return { allow: true };
   if (role === null) {
     return area === "public"
       ? { allow: true }
-      : { redirect: `${LOGIN_PATH}?next=${encodeURIComponent(pathname)}` };
+      : { redirect: `${LOGIN_PATH}?next=${encodeURIComponent(pathname + search)}` };
   }
   return area === ROLE_AREA[role] ? { allow: true } : { redirect: ROLE_HOME[role] };
 }
@@ -49,8 +65,7 @@ export function safeNext(role: Role, next: string | null): string {
     : ROLE_HOME[role];
 }
 
-// TODO(auth): the role comes from the session. Until then the sign-in demo picks it from the
-// identifier, so both areas are reachable.
+// TODO(auth): removed in Task 22, when the sign-in form uses the real session.
 export function demoRoleFor(identifier: string): Role {
   return identifier.toLowerCase().includes("admin") ? "admin" : "user";
 }
