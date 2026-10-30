@@ -1,19 +1,32 @@
 "use client";
 
 import * as React from "react";
-import { KeyRound, ShieldCheck } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { KeyRound, MailCheck } from "lucide-react";
 import { toast } from "sonner";
 
+import { ChangePasswordSheet } from "@/components/pages/profile/components/ChangePasswordSheet";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { formatRelativeTime } from "@/lib/format";
-import { SAMPLE_NOW } from "@/lib/sample-time";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useMe } from "@/hooks/use-me";
+import { useNow } from "@/hooks/use-now";
+import { getApiError } from "@/lib/api/api-error";
+import { meApi } from "@/lib/api/me/me-api";
+import { formatDateTime, formatRelativeTime } from "@/lib/format";
 
-// TODO(auth): both controls hand off to the identity provider.
-export function SecurityCard({ passwordChangedAt }: { passwordChangedAt: string }) {
-  const [twoFactor, setTwoFactor] = React.useState(false);
+export function SecurityCard() {
+  const { data: me } = useMe();
+  const now = useNow();
+  const [changing, setChanging] = React.useState(false);
+
+  const resetEmail = useMutation({
+    mutationFn: async () => (await meApi.sendResetEmail()).data,
+    onSuccess: () => toast.success("Reset link sent", { description: "Check your inbox." }),
+    onError: (error) => toast.error(getApiError(error).message),
+  });
+
+  const changedAt = me?.passwordChangedAt;
 
   return (
     <Card>
@@ -28,42 +41,45 @@ export function SecurityCard({ passwordChangedAt }: { passwordChangedAt: string 
           </span>
           <div className="flex min-w-0 flex-1 flex-col">
             <span className="text-sm font-medium">Password</span>
-            <span className="text-xs text-muted-foreground">
-              Changed {formatRelativeTime(passwordChangedAt, SAMPLE_NOW)}
-            </span>
+            {me && now ? (
+              <span className="text-xs text-muted-foreground">
+                {changedAt ? (
+                  <time dateTime={changedAt} title={formatDateTime(changedAt)}>
+                    Changed {formatRelativeTime(changedAt, now)}
+                  </time>
+                ) : (
+                  "Never changed"
+                )}
+              </span>
+            ) : (
+              <Skeleton className="mt-1 h-3 w-28" />
+            )}
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              toast("Change password", { description: "Available once sign-in is set up" })
-            }
-          >
+          <Button variant="outline" size="sm" disabled={!me} onClick={() => setChanging(true)}>
             Change
           </Button>
         </div>
         <div className="flex items-center gap-3 pt-4">
           <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-            <ShieldCheck className="size-4" />
+            <MailCheck className="size-4" />
           </span>
           <div className="flex min-w-0 flex-1 flex-col">
-            <Label htmlFor="two-factor" className="text-sm font-medium">
-              Two-factor authentication
-            </Label>
+            <span className="text-sm font-medium">Reset by email</span>
             <span className="text-xs text-muted-foreground">
-              {twoFactor ? "Enabled — codes required at sign-in" : "Add a second step at sign-in"}
+              Forgot your current password? We&apos;ll email you a link to set a new one.
             </span>
           </div>
-          <Switch
-            id="two-factor"
-            checked={twoFactor}
-            onCheckedChange={(on) => {
-              setTwoFactor(on);
-              toast.success(on ? "Two-factor enabled" : "Two-factor disabled");
-            }}
-          />
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={!me || resetEmail.isPending}
+            onClick={() => resetEmail.mutate()}
+          >
+            {resetEmail.isPending ? "Sending…" : "Email me a link"}
+          </Button>
         </div>
       </CardContent>
+      <ChangePasswordSheet open={changing} onOpenChange={setChanging} />
     </Card>
   );
 }

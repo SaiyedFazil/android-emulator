@@ -33,9 +33,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useMe } from "@/hooks/use-me";
-import { authApi } from "@/lib/api/auth/auth-api";
-import { LOGIN_PATH } from "@/lib/auth/roles";
-import { signOutTo } from "@/lib/axios";
+import { signOutOfApp } from "@/lib/auth/sign-out";
 import { APP_NAME } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 import type { ShellConfig } from "@/types/nav.types";
@@ -120,13 +118,6 @@ function CapacityRing({
       </TooltipContent>
     </Tooltip>
   );
-}
-
-/** Ends the session on the backend, then in this browser. */
-async function signOutOfApp() {
-  // The session ends in this browser either way; a failed call only leaves it to expire.
-  await authApi.logout().catch(() => undefined);
-  await signOutTo(LOGIN_PATH);
 }
 
 export function AppSidebar({ config }: { config: ShellConfig }) {

@@ -65,6 +65,36 @@ export const resetPasswordSchema = Yup.object({
   confirmPassword: confirmPasswordSchema,
 });
 
+// ---------------------------------------------------------------------------
+// Profile
+// ---------------------------------------------------------------------------
+
+const NAME_MAX_LENGTH = 80;
+const PHONE_MAX_LENGTH = 32;
+const PHONE_PATTERN = /^[+0-9 ()-]*$/;
+
+export const profileSchema = Yup.object({
+  firstName: Yup.string()
+    .trim()
+    .required("Enter your first name.")
+    .max(NAME_MAX_LENGTH, `Use at most ${NAME_MAX_LENGTH} characters.`),
+  lastName: Yup.string()
+    .trim()
+    .required("Enter your last name.")
+    .max(NAME_MAX_LENGTH, `Use at most ${NAME_MAX_LENGTH} characters.`),
+  phone: Yup.string()
+    .trim()
+    .max(PHONE_MAX_LENGTH, `Use at most ${PHONE_MAX_LENGTH} characters.`)
+    .matches(PHONE_PATTERN, "Use digits, +, spaces, hyphens and parentheses only."),
+  timezone: Yup.string().required("Choose a time zone."),
+});
+
+export const changePasswordSchema = Yup.object({
+  currentPassword: Yup.string().required("Enter your current password."),
+  password: passwordSchema,
+  confirmPassword: confirmPasswordSchema,
+});
+
 export const acceptInvitationSchema = Yup.object({
   username: usernameSchema,
   password: passwordSchema,

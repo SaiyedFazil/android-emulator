@@ -16,7 +16,7 @@ import {
   getOrganization,
   memberEmulatorsRunning,
 } from "@/components/pages/admin/utils/admin.selectors";
-import { SignInActivity } from "@/components/pages/profile/components/SignInActivity";
+import { SignInActivity } from "@/components/pages/admin/shared/SignInActivity";
 import { formatDate, formatRelativeTime } from "@/lib/format";
 import { SAMPLE_NOW } from "@/lib/sample-time";
 import type { Member } from "@/types/admin.types";
