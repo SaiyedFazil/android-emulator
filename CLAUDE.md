@@ -30,10 +30,13 @@ reference for wiring pages to the API, phase by phase, each phase with its front
 ## Commands
 
 `npm run dev` (port 5000) · `npm run build` · `npm run lint` · `npm run format:check` ·
-`npm run typecheck` · `npm test` (Node test runner, `src/**/*.test.mjs`) ·
-`npm run check:routes` (smoke-checks every route against `npm run start` on port 3000)
+`npm run typecheck`
 
-Run lint, format:check, typecheck, test and build before calling work done.
+Run lint, format:check, typecheck and build before calling work done.
+
+**No test files or test scripts in this repo** — the developer tests the frontend manually. To
+check logic while working, write a throwaway Node script in the system temp folder (outside the
+repo) and delete it afterwards; never commit tests, test runners or route checkers.
 
 ## Conventions
 
@@ -45,7 +48,7 @@ Run lint, format:check, typecheck, test and build before calling work done.
 - App chrome is `components/common/AppShell` driven by a `ShellConfig` per area
   (`lib/shell/console.shell.tsx`, `lib/shell/admin.shell.tsx`) passed from that area’s layout, so one
   area’s menu and data never ship with the other. Menu icons are elements (`<Users />`).
-- Who may open which area: `lib/auth/roles.ts` (pure, unit-tested). Proxy and session checks will
+- Who may open which area: `lib/auth/roles.ts` (pure functions). Proxy and session checks will
   call it once auth exists.
 - `components/pages/<route>/` holds page content with `components/`, `constants/`, `utils/` beside it.
 - `components/common/` app chrome · `components/custom/` shared components · `components/ui/` shadcn primitives.
@@ -80,8 +83,6 @@ Run lint, format:check, typecheck, test and build before calling work done.
   first, so an unknown id gets the not-found page with status 200 and `noindex` (a soft 404 —
   fine behind sign-in). For a hard 404, reject unknown ids in `proxy.ts` before render; adding
   `generateStaticParams` back would prerender every id again.
-- Tests (`*.test.mjs`) run on Node’s built-in runner; `scripts/test-alias.mjs` resolves the `@/`
-  alias. Only `.ts` modules can be loaded (Node strips types but can’t run JSX).
 
 ## Git
 

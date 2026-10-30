@@ -10,9 +10,7 @@
     "lint:fix": "eslint --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "next typegen && tsc --noEmit",
-    "test": "node --import ./scripts/test-alias.mjs --test \"src/**/*.test.mjs\"",
-    "check:routes": "node scripts/check-routes.mjs"
+    "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.105.0",
