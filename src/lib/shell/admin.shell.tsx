@@ -86,8 +86,6 @@ export const ADMIN_SHELL: ShellConfig = {
       unread: true,
     })),
   capacity: { label: "Fleet capacity", ...fleetCapacity() },
-  // TODO(auth): replace with the signed-in admin once authentication exists.
-  user: { name: "Alex Morgan", email: "admin@example.com", initials: "AM", role: "Owner" },
   profileHref: "/admin/profile",
   settingsHref: "/admin/settings",
   entityNames: Object.fromEntries([

@@ -33,7 +33,6 @@ export interface ShellConfig {
   search: { label: string; placeholder: string };
   notifications: ShellNotification[];
   capacity: { label: string; used: number; total: number };
-  user: { name: string; email: string; initials: string; role: string };
   profileHref: string;
   settingsHref: string;
   /** id → display name for dynamic route segments, used by the breadcrumb. */

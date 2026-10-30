@@ -64,8 +64,3 @@ export function safeNext(role: Role, next: string | null): string {
     ? url.pathname + url.search + url.hash
     : ROLE_HOME[role];
 }
-
-// TODO(auth): removed in Task 22, when the sign-in form uses the real session.
-export function demoRoleFor(identifier: string): Role {
-  return identifier.toLowerCase().includes("admin") ? "admin" : "user";
-}

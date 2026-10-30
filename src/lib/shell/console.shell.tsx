@@ -42,13 +42,6 @@ export const CONSOLE_SHELL: ShellConfig = {
     used: EMULATORS.filter((e) => e.status === "running").length,
     total: 20,
   },
-  // TODO(auth): replace with the signed-in user once authentication exists.
-  user: {
-    name: "Priya Sharma",
-    email: "priya@northwind.dev",
-    initials: "PS",
-    role: "Member · Northwind Labs",
-  },
   profileHref: "/profile",
   settingsHref: "/settings",
 };

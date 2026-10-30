@@ -31,12 +31,15 @@ function readAccessToken(): Promise<string | null> {
 
 let signingOut = false;
 
-/** The session is over: clear the cookie and go to sign in, coming back here afterwards. */
-async function signOutToLogin(): Promise<void> {
+/**
+ * Ends the session in this browser (clears the cookie) and loads `url`. Only the first call runs,
+ * so a sign-out the user asked for and a refused token never race each other.
+ */
+export async function signOutTo(url: string): Promise<void> {
   if (signingOut) return;
   signingOut = true;
   setAccessToken(null);
-  await signOut({ redirectTo: loginUrlForCurrentPage(window.location) });
+  await signOut({ redirectTo: url });
 }
 
 type RetriableConfig = InternalAxiosRequestConfig & { _authRetried?: boolean };
@@ -74,8 +77,9 @@ api.interceptors.response.use(undefined, async (error: unknown) => {
     }
   }
 
-  // No session, the token didn't change (revoked, suspended), or the retry was refused too.
-  await signOutToLogin();
+  // No session, the token didn't change (revoked, suspended), or the retry was refused too:
+  // sign in again, coming back to this page afterwards.
+  await signOutTo(loginUrlForCurrentPage(window.location));
   throw error;
 });
 

@@ -30,7 +30,12 @@ import {
   SidebarSeparator,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useMe } from "@/hooks/use-me";
+import { authApi } from "@/lib/api/auth/auth-api";
+import { LOGIN_PATH } from "@/lib/auth/roles";
+import { signOutTo } from "@/lib/axios";
 import { APP_NAME } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 import type { ShellConfig } from "@/types/nav.types";
@@ -117,11 +122,26 @@ function CapacityRing({
   );
 }
 
+/** Ends the session on the backend, then in this browser. */
+async function signOutOfApp() {
+  // The session ends in this browser either way; a failed call only leaves it to expire.
+  await authApi.logout().catch(() => undefined);
+  await signOutTo(LOGIN_PATH);
+}
+
 export function AppSidebar({ config }: { config: ShellConfig }) {
   const pathname = usePathname();
   const { isMobile, setOpenMobile } = useSidebar();
-  const { capacity: slots, user } = config;
+  const { data: me } = useMe();
+  const { capacity: slots } = config;
   const capacity = Math.round((slots.used / slots.total) * 100);
+  const user = me
+    ? {
+        name: `${me.firstName} ${me.lastName}`,
+        email: me.email,
+        initials: `${me.firstName.charAt(0)}${me.lastName.charAt(0)}`.toUpperCase(),
+      }
+    : null;
 
   // The mobile drawer stays open after a link click unless we close it.
   const closeOnMobile = () => {
@@ -232,12 +252,12 @@ export function AppSidebar({ config }: { config: ShellConfig }) {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton
                   size="lg"
-                  tooltip={user.name}
+                  tooltip={user?.name ?? "Account"}
                   className={cn("data-[state=open]:bg-sidebar-accent", ICON_BUTTON_CLASS)}
                 >
                   <Avatar className="size-8 rounded-full">
                     <AvatarFallback className="bg-sidebar-accent text-xs font-semibold text-sidebar-accent-foreground">
-                      {user.initials}
+                      {user?.initials}
                     </AvatarFallback>
                   </Avatar>
                   <span
@@ -246,10 +266,19 @@ export function AppSidebar({ config }: { config: ShellConfig }) {
                       LABEL_CLASS
                     )}
                   >
-                    <span className="truncate text-[13px] font-medium text-sidebar-accent-foreground">
-                      {user.name}
-                    </span>
-                    <span className="truncate text-xs text-sidebar-muted">{user.email}</span>
+                    {user ? (
+                      <>
+                        <span className="truncate text-[13px] font-medium text-sidebar-accent-foreground">
+                          {user.name}
+                        </span>
+                        <span className="truncate text-xs text-sidebar-muted">{user.email}</span>
+                      </>
+                    ) : (
+                      <span className="flex flex-col gap-1.5">
+                        <Skeleton className="h-3 w-24 bg-sidebar-accent" />
+                        <Skeleton className="h-2.5 w-32 bg-sidebar-accent" />
+                      </span>
+                    )}
                   </span>
                   <ChevronsUpDown className="ml-auto text-sidebar-muted group-data-[collapsible=icon]:hidden" />
                 </SidebarMenuButton>
@@ -260,10 +289,12 @@ export function AppSidebar({ config }: { config: ShellConfig }) {
                 sideOffset={8}
                 className="w-56"
               >
-                <DropdownMenuLabel className="flex flex-col">
-                  <span className="text-sm font-medium text-foreground">{user.name}</span>
-                  <span className="text-xs font-normal text-muted-foreground">{user.email}</span>
-                </DropdownMenuLabel>
+                {user ? (
+                  <DropdownMenuLabel className="flex flex-col">
+                    <span className="text-sm font-medium text-foreground">{user.name}</span>
+                    <span className="text-xs font-normal text-muted-foreground">{user.email}</span>
+                  </DropdownMenuLabel>
+                ) : null}
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
                   <DropdownMenuItem asChild className="cursor-pointer">
@@ -280,12 +311,9 @@ export function AppSidebar({ config }: { config: ShellConfig }) {
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                {/* TODO(auth): end the session before leaving for the sign-in page. */}
-                <DropdownMenuItem asChild className="cursor-pointer">
-                  <Link href="/login" onClick={closeOnMobile}>
-                    <LogOut />
-                    Sign out
-                  </Link>
+                <DropdownMenuItem className="cursor-pointer" onSelect={() => void signOutOfApp()}>
+                  <LogOut />
+                  Sign out
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
