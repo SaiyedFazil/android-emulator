@@ -44,7 +44,8 @@ export function PersonalDetailsForm() {
 
   const save = useMutation({
     mutationFn: async (patch: Partial<ProfileFields>) => (await meApi.updateMe(patch)).data,
-    onSuccess: (updated) => queryClient.setQueryData<Me>(ME_QUERY_KEY, updated),
+    // Every profile query (["me", userId]); `useMe` stores the new copy.
+    onSuccess: (updated) => queryClient.setQueriesData<Me>({ queryKey: ME_QUERY_KEY }, updated),
   });
 
   const formik = useFormik<ProfileFormValues>({

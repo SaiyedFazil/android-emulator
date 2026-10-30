@@ -18,6 +18,7 @@ import { Reveal } from "@/components/pages/login/components/Reveal";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { loginErrorMessage } from "@/lib/auth/login-errors";
+import { clearStoredMe } from "@/lib/auth/me-storage";
 import { areaRoleOf, safeNext } from "@/lib/auth/roles";
 import { loginSchema } from "@/lib/validation";
 
@@ -44,6 +45,10 @@ function PasswordSetNotice() {
 
 export function LoginForm() {
   const router = useRouter();
+
+  // Only signed-out users reach this page (the proxy sends signed-in ones home), so any stored
+  // profile is from an ended session — e.g. one that expired and was redirected here.
+  React.useEffect(() => clearStoredMe(), []);
   const [serverError, setServerError] = React.useState<string | null>(null);
   const [redirecting, setRedirecting] = React.useState(false);
 

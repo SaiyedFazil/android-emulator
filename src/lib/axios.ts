@@ -2,6 +2,7 @@ import axios, { type InternalAxiosRequestConfig } from "axios";
 import { getSession, signOut } from "next-auth/react";
 
 import { loginUrlForCurrentPage } from "@/lib/auth/login-url";
+import { clearStoredMe } from "@/lib/auth/me-storage";
 
 /**
  * The browser's API client (client components only). Every call goes straight from the browser to
@@ -39,6 +40,7 @@ export async function signOutTo(url: string): Promise<void> {
   if (signingOut) return;
   signingOut = true;
   setAccessToken(null);
+  clearStoredMe();
   await signOut({ redirectTo: url });
 }
 
