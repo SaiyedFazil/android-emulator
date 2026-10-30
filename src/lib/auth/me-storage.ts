@@ -5,7 +5,7 @@ import type { Me } from "@/types/auth.types";
  * Versioned: when `Me` changes shape, bump it and old copies are ignored instead of misread.
  * It holds no secrets (no tokens), and it is removed whenever the session ends.
  */
-const STORAGE_KEY = "emulator-console.me.v1";
+const STORAGE_KEY = "emulator-console.me";
 
 /** The stored profile, only if it belongs to `userId` (another account's copy is ignored). */
 export function readStoredMe(userId: string | undefined): Me | undefined {
