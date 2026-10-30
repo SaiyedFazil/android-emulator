@@ -7,7 +7,8 @@ Guidance for Claude Code when working in this repository.
 ## What this is
 
 A single Next.js 16 app (App Router, `cacheComponents` + `partialPrefetching` on) for managing
-Android emulators. Currently static: no API, no auth. Design direction "Graphite & Teal"
+Android emulators. Sign-in and the profile are live against the backend; other pages stay on
+sample data until their phase. Design direction "Graphite & Teal"
 (spec: `docs/superpowers/specs/2026-10-19-emulator-console-design.md`).
 
 ## Backend integration
@@ -17,8 +18,24 @@ The NestJS backend is `../emulator-backend`. Its design
 reference for wiring pages to the API, phase by phase, each phase with its frontend part:
 §6.4 auth behaviour, §8 endpoints, §10 frontend integration, §11 phases.
 
-- The browser calls the API directly with `Authorization: Bearer`; the frontend itself stores the
-  tokens in the `access_token` / `refresh_token` cookies.
+- The structure follows the user's t-genius frontend (`D:\t-genius\t-genius-frontend`), in one app.
+- **Session:** Auth.js v5 (`src/auth.ts`, Credentials) keeps both tokens in its encrypted HttpOnly
+  cookie; the browser only gets `session.accessToken`. Sign-in and refresh run on the Next server
+  (`lib/auth/backend-auth.ts`, native fetch), forwarding `User-Agent` / `X-Forwarded-For`; a refresh
+  happens once per refresh token (`lib/auth/refresh-once.ts`). A refused refresh returns `null` from
+  the `jwt` callback, which ends the session and clears the cookie.
+- **API calls** go from the browser through `lib/axios.ts` (Bearer; a 401 reads the session once,
+  retries once, then `signOutTo(login?next=…)`). One object of typed calls per area in
+  `lib/api/<area>/<area>-api.ts` returning `ApiResponse<T>` (`{ message, data }`); errors are read
+  with `getApiError(error)` (`{ status, code, message, details }`) — no `err as {…}` casts.
+- **Data** is fetched in client components with TanStack Query (`useQuery`; `useMutation` +
+  `setQueryData` / `invalidateQueries`). Never read the session or the API in a Server Component:
+  pages stay static shells and `AuthProvider` loads the session in the browser.
+- **Forms** use Formik + Yup with the schemas in `lib/validation.ts` (the backend's rules: passwords
+  8 characters to 72 bytes). Backend codes land on the matching field.
+- `src/proxy.ts` routes by the session's role (`resolveAccess`); it only redirects, the API
+  enforces access. Pages reached from emailed links (`AUTH_FLOW_PATHS`) are open to everyone and
+  remove `?token=` from the URL (`useLinkToken`).
 - API ids are uuids (`id: string`). API enum values are `UPPER_SNAKE_CASE` (`"ACTIVE"`,
   `"ORGANIZATION_ADMIN"`): the lowercase unions in `src/types/` change to them as each area is
   wired, and screens show labels from label maps, never raw values.
@@ -48,15 +65,16 @@ repo) and delete it afterwards; never commit tests, test runners or route checke
 - App chrome is `components/common/AppShell` driven by a `ShellConfig` per area
   (`lib/shell/console.shell.tsx`, `lib/shell/admin.shell.tsx`) passed from that area’s layout, so one
   area’s menu and data never ship with the other. Menu icons are elements (`<Users />`).
-- Who may open which area: `lib/auth/roles.ts` (pure functions). Proxy and session checks will
-  call it once auth exists.
+- Who may open which area: `lib/auth/roles.ts` (pure functions), used by `proxy.ts`, the sign-in
+  form and the API client.
 - `components/pages/<route>/` holds page content with `components/`, `constants/`, `utils/` beside it.
 - `components/common/` app chrome · `components/custom/` shared components · `components/ui/` shadcn primitives.
 - Colours come only from theme tokens in `src/app/globals.css` — no hex values or `bg-white` in
   components (the one exception is the theme previews in Settings → Appearance).
-- Static data lives in `constants/` files marked `TODO(api)` / `TODO(auth)`. No axios or fetch yet.
-- Sample timestamps use `minutesAgo()` / `SAMPLE_NOW` from `lib/sample-time.ts`; never call
-  `Date.now()` or `new Date()` during render — Cache Components flags it and hydration would differ.
+- Static data lives in `constants/` files marked `TODO(api)`, until its phase wires it.
+- Sample timestamps use `minutesAgo()` / `SAMPLE_NOW` from `lib/sample-time.ts`; live data formats
+  against `useNow()` (null until mounted). Never call `Date.now()` or `new Date()` during render —
+  Cache Components flags it and hydration would differ.
 - Add a dependency only in the change that first imports it.
 
 ## Gotchas
