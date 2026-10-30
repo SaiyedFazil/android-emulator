@@ -118,7 +118,7 @@ export function TimezoneSelect({
             className="flex w-full items-center gap-2 border-b px-3 py-2 text-left text-sm text-primary hover:bg-accent"
           >
             <LocateFixed className="size-4 shrink-0" />
-            <span className="truncate">Use this device&apos;s time zone ({deviceZone})</span>
+            <span className="truncate">Use device&apos;s time zone</span>
           </button>
         ) : null}
         <ul
