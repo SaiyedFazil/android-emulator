@@ -3,6 +3,7 @@
  * they carry the refresh token, which never reaches the browser. Native `fetch`, so the proxy can
  * use them too.
  */
+import dayjs from "@/lib/dayjs";
 import type { ApiErrorBody, ApiResponse } from "@/types/api.types";
 import type { AuthUser, TokenPair } from "@/types/auth.types";
 
@@ -12,8 +13,7 @@ const API_URL = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL;
 /** A backend call that takes longer gives up, so a hung API can't hang every page. */
 const BACKEND_TIMEOUT_MS = 10_000;
 /** Refresh when less than this is left on the access token. */
-const REFRESH_MARGIN_MS = 60_000;
-const MS_PER_SECOND = 1000;
+const REFRESH_MARGIN_SECONDS = 60;
 
 /** The browser's details the backend records on the session and rate-limits by. */
 const CLIENT_HEADERS = ["user-agent", "x-forwarded-for"] as const;
@@ -119,9 +119,9 @@ export async function refreshWithBackend(
 export function toSessionTokens(pair: TokenPair, receivedAt: number): SessionTokens {
   return {
     accessToken: pair.accessToken,
-    accessTokenExpiresAt: receivedAt + pair.accessTokenExpiresIn * MS_PER_SECOND,
+    accessTokenExpiresAt: dayjs(receivedAt).add(pair.accessTokenExpiresIn, "second").valueOf(),
     refreshToken: pair.refreshToken,
-    refreshTokenExpiresAt: Date.parse(pair.refreshTokenExpiresAt),
+    refreshTokenExpiresAt: dayjs(pair.refreshTokenExpiresAt).valueOf(),
   };
 }
 
@@ -130,8 +130,10 @@ export function tokenState(
   tokens: Pick<SessionTokens, "accessTokenExpiresAt" | "refreshTokenExpiresAt">,
   now: number
 ): "valid" | "refresh" | "expired" {
-  if (now >= tokens.refreshTokenExpiresAt) return "expired";
-  return now < tokens.accessTokenExpiresAt - REFRESH_MARGIN_MS ? "valid" : "refresh";
+  const at = dayjs(now);
+  if (!at.isBefore(tokens.refreshTokenExpiresAt)) return "expired";
+  const refreshFrom = dayjs(tokens.accessTokenExpiresAt).subtract(REFRESH_MARGIN_SECONDS, "second");
+  return at.isBefore(refreshFrom) ? "valid" : "refresh";
 }
 
 /**

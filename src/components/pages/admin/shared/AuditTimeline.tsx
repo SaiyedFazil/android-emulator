@@ -2,7 +2,8 @@ import Link from "next/link";
 import { ScrollText } from "lucide-react";
 
 import { EmptyState } from "@/components/custom/EmptyState";
-import { formatDateTime, formatRelativeTime } from "@/lib/format";
+import { LocalTime } from "@/components/custom/LocalTime";
+import { formatRelativeTime } from "@/lib/format";
 import { SAMPLE_NOW } from "@/lib/sample-time";
 import { cn } from "@/lib/utils";
 import type { AuditEvent } from "@/types/admin.types";
@@ -68,9 +69,7 @@ export function AuditTimeline({
             </p>
             <p className="text-xs text-muted-foreground">
               {event.actor.name} ·{" "}
-              <time dateTime={event.at} title={formatDateTime(event.at)}>
-                {formatRelativeTime(event.at, SAMPLE_NOW)}
-              </time>
+              <LocalTime value={event.at}>{formatRelativeTime(event.at, SAMPLE_NOW)}</LocalTime>
             </p>
           </div>
         </li>

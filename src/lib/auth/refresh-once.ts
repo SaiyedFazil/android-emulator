@@ -7,8 +7,10 @@
  * in one Node process. With several frontend replicas, use sticky sessions.
  */
 
-/** How long one refresh result is shared: covers one page load. */
-const SHARE_WINDOW_MS = 120_000;
+import dayjs from "@/lib/dayjs";
+
+/** How long one refresh result is shared, in seconds: covers one page load. */
+const SHARE_WINDOW_SECONDS = 120;
 
 interface SharedRefresh {
   promise: Promise<unknown>;
@@ -24,7 +26,7 @@ const refreshes = (globalForRefresh.__emulatorRefreshes ??= new Map<string, Shar
 export function refreshOnce<T>(
   refreshToken: string,
   run: () => Promise<T>,
-  now: number = Date.now()
+  now: number = dayjs().valueOf()
 ): Promise<T> {
   for (const [token, entry] of refreshes) {
     if (entry.expiresAt <= now) refreshes.delete(token);
@@ -34,7 +36,8 @@ export function refreshOnce<T>(
   if (existing) return existing.promise as Promise<T>;
 
   const promise = run();
-  const entry: SharedRefresh = { promise, expiresAt: now + SHARE_WINDOW_MS };
+  const expiresAt = dayjs(now).add(SHARE_WINDOW_SECONDS, "second").valueOf();
+  const entry: SharedRefresh = { promise, expiresAt };
   refreshes.set(refreshToken, entry);
   // A failed refresh is not shared: the next caller tries again.
   promise.catch(() => {

@@ -5,6 +5,7 @@ import { ToneBadge } from "@/components/custom/ToneBadge";
 import { SUBSCRIPTION_STATUS } from "@/components/pages/admin/constants/status.constants";
 import { ChangePlanButton } from "@/components/pages/admin/organizations/detail/overview/ChangePlanButton";
 import { InvoicesTable } from "@/components/pages/admin/shared/InvoicesTable";
+import { LocalTime } from "@/components/custom/LocalTime";
 import {
   cycleAmount,
   getPlan,
@@ -12,7 +13,7 @@ import {
   monthlyRevenue,
   subscriptionFor,
 } from "@/components/pages/admin/utils/admin.selectors";
-import { formatCurrency, formatDate, formatPrice } from "@/lib/format";
+import { formatCurrency, formatPrice } from "@/lib/format";
 import type { Organization } from "@/types/admin.types";
 
 export function OrganizationBilling({ org }: { org: Organization }) {
@@ -40,9 +41,9 @@ export function OrganizationBilling({ org }: { org: Organization }) {
                 : subscription.cancelAtPeriodEnd
                   ? "Ends"
                   : "Renews",
-              value: renewal ? formatDate(renewal) : "—",
+              value: renewal ? <LocalTime value={renewal} format="date" /> : "—",
             },
-            { label: "Started", value: formatDate(subscription.startedAt) },
+            { label: "Started", value: <LocalTime value={subscription.startedAt} format="date" /> },
             {
               label: "Payment method",
               value: org.paymentMethod

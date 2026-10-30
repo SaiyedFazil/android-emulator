@@ -23,7 +23,8 @@ import {
 } from "@/components/pages/emulators/constants/emulator.constants";
 import { formatAddress } from "@/components/pages/emulators/utils/emulator.utils";
 import { Card } from "@/components/ui/card";
-import { formatDateTime, formatRelativeTime } from "@/lib/format";
+import { LocalTime } from "@/components/custom/LocalTime";
+import { formatRelativeTime } from "@/lib/format";
 import { SAMPLE_NOW } from "@/lib/sample-time";
 import type { FleetEmulator } from "@/types/admin.types";
 
@@ -171,13 +172,12 @@ function columnsFor(showOrganization: boolean, showOwner: boolean): DataTableCol
       accessorFn: (row) => row.emulator.lastActive,
       header: ({ column }) => <ColumnHeader column={column} title="Last active" />,
       cell: ({ row }) => (
-        <time
-          dateTime={row.original.emulator.lastActive}
-          title={formatDateTime(row.original.emulator.lastActive)}
+        <LocalTime
+          value={row.original.emulator.lastActive}
           className="whitespace-nowrap text-muted-foreground"
         >
           {formatRelativeTime(row.original.emulator.lastActive, SAMPLE_NOW)}
-        </time>
+        </LocalTime>
       ),
       meta: { label: "Last active" },
     },

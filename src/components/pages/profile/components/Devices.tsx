@@ -16,13 +16,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LocalTime } from "@/components/custom/LocalTime";
 import { useNow } from "@/hooks/use-now";
 import { getApiError } from "@/lib/api/api-error";
 import { authApi } from "@/lib/api/auth/auth-api";
 import { signOutOfApp } from "@/lib/auth/sign-out";
 import { LOGIN_PATH } from "@/lib/auth/roles";
 import { signOutTo } from "@/lib/axios";
-import { formatDateTime, formatRelativeTime } from "@/lib/format";
+import type { Dayjs } from "@/lib/dayjs";
+import { formatRelativeTime } from "@/lib/format";
 import type { ApiSession, DeviceType } from "@/types/auth.types";
 
 export const SESSIONS_QUERY_KEY = ["sessions"] as const;
@@ -40,7 +42,7 @@ function DeviceRow({
   onSignOut,
 }: {
   session: ApiSession;
-  now: Date | null;
+  now: Dayjs | null;
   busy: boolean;
   onSignOut: () => void;
 }) {
@@ -71,9 +73,9 @@ function DeviceRow({
           {now ? (
             <>
               {" · "}
-              <time dateTime={session.lastUsedAt} title={formatDateTime(session.lastUsedAt)}>
+              <LocalTime value={session.lastUsedAt}>
                 Active {formatRelativeTime(session.lastUsedAt, now)}
-              </time>
+              </LocalTime>
             </>
           ) : null}
         </span>

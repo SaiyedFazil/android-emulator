@@ -9,7 +9,7 @@ interface StatCardProps {
   label: string;
   /** A count, an amount, or any rendered value. */
   value: React.ReactNode;
-  hint?: string;
+  hint?: React.ReactNode;
   /** Shown in a tile at the top right; replaces the tone dot. */
   icon?: React.ReactNode;
   tone?: StatTone;

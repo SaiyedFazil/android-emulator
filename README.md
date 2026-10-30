@@ -10,7 +10,7 @@ still show sample data from `constants/` files until their phase (see [Static da
 ## Stack
 
 Next.js 16 (App Router, Cache Components) · React 19 · TypeScript · Tailwind CSS v4 ·
-shadcn/ui (Radix) · Auth.js v5 · axios · TanStack Query 5 · Formik + Yup · TanStack Table v9 ·
+shadcn/ui (Radix) · Auth.js v5 · axios · TanStack Query 5 · Formik + Yup · Day.js · TanStack Table v9 ·
 Recharts · next-themes · Sonner · ESLint · Prettier
 
 ## Getting started
@@ -105,6 +105,12 @@ Search the code for `TODO(api)` to find every placeholder:
 - `lib/shell/*.shell.tsx` — notifications and host capacity in the app chrome
 - `lib/sample-time.ts` — sample timestamps are relative to a fixed `SAMPLE_NOW`, so prerendered
   and hydrated output match. Live data is formatted against the real time after mount (`useNow`).
+
+## Dates and time zones
+
+All date logic uses Day.js (`src/lib/dayjs.ts`). Dates and times are shown in the time zone of
+the viewer's machine through `<LocalTime>`: India sees IST, New York sees Eastern time. Time zone
+pickers list every IANA zone with its current UTC offset (`TimezoneSelect`).
 
 ## Renaming the app
 

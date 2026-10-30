@@ -9,12 +9,11 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
+import dayjs from "@/lib/dayjs";
 
 const chartConfig = {
   inUse: { label: "Emulators in use", color: "var(--primary)" },
 } satisfies ChartConfig;
-
-const dayLabel = new Intl.DateTimeFormat("en", { day: "numeric", month: "short", timeZone: "UTC" });
 
 /** One series against the plan limit, drawn as a dashed reference line. */
 export function UsageChart({
@@ -28,7 +27,8 @@ export function UsageChart({
 }) {
   const points = data.map((d) => ({
     ...d,
-    label: dayLabel.format(new Date(`${d.day}T00:00:00Z`)),
+    // `day` is a calendar date ("2026-10-19"), labelled as such in every time zone.
+    label: dayjs.utc(d.day).format("MMM D"),
   }));
   const top = Math.max(limit, ...data.map((d) => d.inUse));
 

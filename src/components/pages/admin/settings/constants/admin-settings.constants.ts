@@ -1,12 +1,5 @@
 // TODO(api): platform settings come from (and save to) the settings endpoint.
 
-export const TIME_ZONES = [
-  { value: "UTC", label: "UTC" },
-  { value: "Europe/London", label: "London (GMT/BST)" },
-  { value: "America/New_York", label: "US Eastern (ET)" },
-  { value: "Asia/Kolkata", label: "India (IST, UTC+5:30)" },
-];
-
 export const TRIAL_LENGTHS = [7, 14, 30];
 export const INVITE_EXPIRY_DAYS = [3, 7, 14];
 export const GRACE_DAYS = [3, 7, 14];

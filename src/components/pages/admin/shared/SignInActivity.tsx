@@ -2,7 +2,8 @@ import { Monitor, Smartphone } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatDateTime, formatRelativeTime } from "@/lib/format";
+import { LocalTime } from "@/components/custom/LocalTime";
+import { formatRelativeTime } from "@/lib/format";
 import { SAMPLE_NOW } from "@/lib/sample-time";
 import type { SignInEvent } from "@/types/profile.types";
 
@@ -43,13 +44,9 @@ export function SignInActivity({
                     {e.location} · <span className="font-mono">{e.ip}</span>
                   </span>
                 </div>
-                <time
-                  dateTime={e.at}
-                  title={formatDateTime(e.at)}
-                  className="shrink-0 text-xs text-muted-foreground"
-                >
+                <LocalTime value={e.at} className="shrink-0 text-xs text-muted-foreground">
                   {formatRelativeTime(e.at, SAMPLE_NOW)}
-                </time>
+                </LocalTime>
               </li>
             );
           })}

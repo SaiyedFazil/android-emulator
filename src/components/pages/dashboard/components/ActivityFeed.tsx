@@ -1,7 +1,8 @@
 import { STATUS_DOT_CLASS } from "@/components/custom/StatusBadge";
 import { ACTIVITY } from "@/components/pages/dashboard/constants/dashboard.constants";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatDateTime, formatRelativeTime } from "@/lib/format";
+import { LocalTime } from "@/components/custom/LocalTime";
+import { formatRelativeTime } from "@/lib/format";
 import { SAMPLE_NOW } from "@/lib/sample-time";
 import { cn } from "@/lib/utils";
 
@@ -29,13 +30,9 @@ export function ActivityFeed() {
               />
               <div className="flex flex-col gap-0.5">
                 <span className="text-[13px]">{item.message}</span>
-                <time
-                  dateTime={item.at}
-                  title={formatDateTime(item.at)}
-                  className="text-xs text-muted-foreground"
-                >
+                <LocalTime value={item.at} className="text-xs text-muted-foreground">
                   {formatRelativeTime(item.at, SAMPLE_NOW)}
-                </time>
+                </LocalTime>
               </div>
             </li>
           ))}

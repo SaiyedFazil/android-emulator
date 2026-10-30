@@ -13,6 +13,7 @@ import { AUDIT_EVENTS } from "@/components/pages/admin/audit-log/constants/audit
 import { ActionText } from "@/components/pages/admin/shared/AuditTimeline";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { LocalTime } from "@/components/custom/LocalTime";
 import {
   Select,
   SelectContent,
@@ -20,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { formatDateTime, formatRelativeTime } from "@/lib/format";
+import { formatRelativeTime } from "@/lib/format";
 import { SAMPLE_NOW } from "@/lib/sample-time";
 import { cn } from "@/lib/utils";
 import type { AuditCategory, AuditEvent } from "@/types/admin.types";
@@ -66,7 +67,7 @@ const SEVERITY = {
   },
 };
 
-const hoursAgo = (iso: string) => (SAMPLE_NOW.getTime() - new Date(iso).getTime()) / 3_600_000;
+const hoursAgo = (iso: string) => SAMPLE_NOW.diff(iso, "hour", true);
 
 export function AuditLog() {
   const [query, setQuery] = React.useState("");
@@ -212,7 +213,9 @@ export function AuditLog() {
                       <span aria-hidden="true">·</span>
                       <span>{CATEGORY_LABEL[event.category]}</span>
                       <span aria-hidden="true">·</span>
-                      <time dateTime={event.at}>{formatRelativeTime(event.at, SAMPLE_NOW)}</time>
+                      <LocalTime value={event.at}>
+                        {formatRelativeTime(event.at, SAMPLE_NOW)}
+                      </LocalTime>
                     </p>
                   </div>
                 </div>
@@ -231,13 +234,12 @@ export function AuditLog() {
                 <span className="hidden font-mono text-xs text-muted-foreground md:block">
                   {event.ip ?? "—"}
                 </span>
-                <time
-                  dateTime={event.at}
-                  title={formatDateTime(event.at)}
+                <LocalTime
+                  value={event.at}
                   className="hidden text-right text-xs whitespace-nowrap text-muted-foreground md:block"
                 >
                   {formatRelativeTime(event.at, SAMPLE_NOW)}
-                </time>
+                </LocalTime>
               </li>
             ))}
           </ol>

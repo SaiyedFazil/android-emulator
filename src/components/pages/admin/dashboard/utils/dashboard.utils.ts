@@ -5,14 +5,10 @@ import { planSubscribers, totalMrr } from "@/components/pages/admin/utils/admin.
 import { SAMPLE_NOW } from "@/lib/sample-time";
 import type { Plan } from "@/types/admin.types";
 
-const monthName = new Intl.DateTimeFormat("en", { month: "short", timeZone: "UTC" });
-
-/** The twelve calendar months ending with SAMPLE_NOW's, oldest first. */
+/** The twelve UTC calendar months ending with SAMPLE_NOW's, oldest first. */
 const MONTHS = Array.from({ length: 12 }, (_, index) => {
-  const start = new Date(
-    Date.UTC(SAMPLE_NOW.getUTCFullYear(), SAMPLE_NOW.getUTCMonth() - 11 + index, 1)
-  );
-  return { key: start.toISOString().slice(0, 7), label: monthName.format(start) };
+  const start = SAMPLE_NOW.startOf("month").subtract(11 - index, "month");
+  return { key: start.format("YYYY-MM"), label: start.format("MMM") };
 });
 
 /** MRR per month in dollars (the chart's unit); the last point equals today's MRR. */

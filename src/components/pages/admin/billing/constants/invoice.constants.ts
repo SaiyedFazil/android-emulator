@@ -4,7 +4,6 @@ import { SUBSCRIPTIONS } from "@/components/pages/admin/subscriptions/constants/
 import { SAMPLE_NOW, daysAgo } from "@/lib/sample-time";
 import type { Invoice, InvoiceStatus } from "@/types/admin.types";
 
-const DAY_MS = 86_400_000;
 const CYCLE_DAYS = { monthly: 30, yearly: 365 };
 /** How far back the sample billing history goes. */
 const HISTORY_DAYS = 180;
@@ -32,9 +31,7 @@ const priceOf = Object.fromEntries(PLANS.map((p) => [p.id, p.priceMonthly]));
 const issued: Omit<Invoice, "id" | "number">[] = SUBSCRIPTIONS.flatMap((subscription) => {
   const amount = cycleAmountFor(subscription, priceOf[subscription.planId]) ?? 0;
   if (amount === 0 || subscription.status === "trialing") return [];
-  const age = Math.floor(
-    (SAMPLE_NOW.getTime() - new Date(subscription.startedAt).getTime()) / DAY_MS
-  );
+  const age = SAMPLE_NOW.diff(subscription.startedAt, "day");
   const cycle = CYCLE_DAYS[subscription.billingCycle];
   const exceptions = EXCEPTIONS[subscription.orgId] ?? {};
 

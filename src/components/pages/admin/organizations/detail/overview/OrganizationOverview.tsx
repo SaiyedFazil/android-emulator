@@ -7,6 +7,7 @@ import { StatCard } from "@/components/custom/StatCard";
 import { CurrentPlanCard } from "@/components/pages/admin/organizations/detail/overview/CurrentPlanCard";
 import { UsageChart } from "@/components/pages/admin/organizations/detail/overview/UsageChart";
 import { AuditTimeline } from "@/components/pages/admin/shared/AuditTimeline";
+import { LocalTime } from "@/components/custom/LocalTime";
 import {
   auditFor,
   getMember,
@@ -17,7 +18,7 @@ import {
   subscriptionFor,
   usageHistory,
 } from "@/components/pages/admin/utils/admin.selectors";
-import { formatCurrency, formatDate, formatRelativeTime } from "@/lib/format";
+import { formatCurrency, formatRelativeTime } from "@/lib/format";
 import { SAMPLE_NOW } from "@/lib/sample-time";
 import type { Organization } from "@/types/admin.types";
 
@@ -65,7 +66,7 @@ export function OrganizationOverview({ org }: { org: Organization }) {
         />
         <StatCard
           label={subscription.trialEndsAt ? "Trial ends" : "Next renewal"}
-          value={renewal ? formatDate(renewal) : "—"}
+          value={renewal ? <LocalTime value={renewal} format="date" /> : "—"}
           hint={renewal ? formatRelativeTime(renewal, SAMPLE_NOW) : "Nothing scheduled"}
           icon={<CalendarClock />}
         />
@@ -96,7 +97,7 @@ export function OrganizationOverview({ org }: { org: Organization }) {
               { label: "Billing email", value: org.billingEmail },
               { label: "Country", value: org.country },
               { label: "Members", value: `${members.length} (${count("active")} active)` },
-              { label: "Created", value: formatDate(org.createdAt) },
+              { label: "Created", value: <LocalTime value={org.createdAt} format="date" /> },
               {
                 label: "Payment method",
                 value: org.paymentMethod

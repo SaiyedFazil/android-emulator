@@ -17,7 +17,8 @@ import {
   memberEmulatorsRunning,
 } from "@/components/pages/admin/utils/admin.selectors";
 import { SignInActivity } from "@/components/pages/admin/shared/SignInActivity";
-import { formatDate, formatRelativeTime } from "@/lib/format";
+import { LocalTime } from "@/components/custom/LocalTime";
+import { formatRelativeTime } from "@/lib/format";
 import { SAMPLE_NOW } from "@/lib/sample-time";
 import type { Member } from "@/types/admin.types";
 
@@ -86,7 +87,13 @@ export function UserDetail({ member }: { member: Member }) {
               {member.lastActiveAt ? formatRelativeTime(member.lastActiveAt, SAMPLE_NOW) : "Never"}
             </span>
           }
-          hint={member.lastActiveAt ? formatDate(member.lastActiveAt) : "Hasn't signed in"}
+          hint={
+            member.lastActiveAt ? (
+              <LocalTime value={member.lastActiveAt} format="date" />
+            ) : (
+              "Hasn't signed in"
+            )
+          }
           icon={<MonitorSmartphone />}
         />
       </div>
@@ -113,7 +120,7 @@ export function UserDetail({ member }: { member: Member }) {
                 },
                 { label: "Role", value: role.label },
                 { label: "Status", value: status.label },
-                { label: "Joined", value: formatDate(member.joinedAt) },
+                { label: "Joined", value: <LocalTime value={member.joinedAt} format="date" /> },
                 { label: "Two-factor", value: member.twoFactor ? "On" : "Off" },
                 { label: "User ID", value: member.id, mono: true },
               ]}

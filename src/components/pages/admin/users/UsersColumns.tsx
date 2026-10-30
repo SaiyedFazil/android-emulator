@@ -10,12 +10,12 @@ import type { DataTableColumnDef } from "@/components/custom/data-table";
 import { RowActions } from "@/components/custom/RowActions";
 import { ToneBadge } from "@/components/custom/ToneBadge";
 import { MEMBER_STATUS, ORG_ROLE } from "@/components/pages/admin/constants/status.constants";
+import { LocalTime } from "@/components/custom/LocalTime";
 import {
   LastActiveCell,
   PersonCell,
   RunningCell,
 } from "@/components/pages/admin/shared/MemberCells";
-import { formatDate } from "@/lib/format";
 import type { Member } from "@/types/admin.types";
 
 export interface UserRow {
@@ -126,12 +126,11 @@ export const USER_COLUMNS: DataTableColumnDef<UserRow>[] = [
     accessorFn: (row) => row.member.joinedAt,
     header: ({ column }) => <ColumnHeader column={column} title="Joined" />,
     cell: ({ row }) => (
-      <time
-        dateTime={row.original.member.joinedAt}
+      <LocalTime
+        value={row.original.member.joinedAt}
+        format="date"
         className="whitespace-nowrap text-muted-foreground"
-      >
-        {formatDate(row.original.member.joinedAt)}
-      </time>
+      />
     ),
     meta: { label: "Joined" },
   },

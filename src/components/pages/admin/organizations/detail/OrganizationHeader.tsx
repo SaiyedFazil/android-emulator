@@ -3,13 +3,13 @@ import { PlanBadge } from "@/components/custom/PlanBadge";
 import { ToneBadge } from "@/components/custom/ToneBadge";
 import { ORG_STATUS } from "@/components/pages/admin/constants/status.constants";
 import { OrganizationActions } from "@/components/pages/admin/organizations/detail/OrganizationActions";
+import { LocalTime } from "@/components/custom/LocalTime";
 import {
   getMember,
   getPlan,
   organizationStatus,
   subscriptionFor,
 } from "@/components/pages/admin/utils/admin.selectors";
-import { formatDate } from "@/lib/format";
 import type { Organization } from "@/types/admin.types";
 
 export function OrganizationHeader({ org }: { org: Organization }) {
@@ -34,7 +34,9 @@ export function OrganizationHeader({ org }: { org: Organization }) {
             <span className="hidden sm:inline">·</span>
             <span>Owner {owner?.name ?? "—"}</span>
             <span aria-hidden="true">·</span>
-            <span>Since {formatDate(org.createdAt)}</span>
+            <span>
+              Since <LocalTime value={org.createdAt} format="date" />
+            </span>
           </div>
         </div>
       </div>

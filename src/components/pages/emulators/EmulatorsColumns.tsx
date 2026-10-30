@@ -6,7 +6,8 @@ import type { DataTableColumnDef } from "@/components/custom/data-table";
 import { CopyAddress } from "@/components/pages/emulators/components/CopyAddress";
 import { EmulatorRowActions } from "@/components/pages/emulators/components/EmulatorRowActions";
 import { formatAddress } from "@/components/pages/emulators/utils/emulator.utils";
-import { formatDateTime, formatRelativeTime } from "@/lib/format";
+import { LocalTime } from "@/components/custom/LocalTime";
+import { formatRelativeTime } from "@/lib/format";
 import { SAMPLE_NOW } from "@/lib/sample-time";
 import type { Emulator, EmulatorStatus } from "@/types/emulator.types";
 
@@ -73,13 +74,12 @@ export const EMULATOR_COLUMNS: DataTableColumnDef<Emulator>[] = [
     header: ({ column }) => <ColumnHeader column={column} title="Last active" />,
     meta: { label: "Last active" },
     cell: ({ row }) => (
-      <time
-        dateTime={row.original.lastActive}
-        title={formatDateTime(row.original.lastActive)}
+      <LocalTime
+        value={row.original.lastActive}
         className="whitespace-nowrap text-muted-foreground"
       >
         {formatRelativeTime(row.original.lastActive, SAMPLE_NOW)}
-      </time>
+      </LocalTime>
     ),
   },
   {

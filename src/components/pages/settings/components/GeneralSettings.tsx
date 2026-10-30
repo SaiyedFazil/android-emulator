@@ -1,7 +1,9 @@
 "use client";
 
+import * as React from "react";
+
+import { TimezoneSelect } from "@/components/custom/TimezoneSelect";
 import { SettingRow, SettingsCard } from "@/components/pages/settings/components/SettingsCard";
-import { TIMEZONES } from "@/components/pages/profile/constants/profile.constants";
 import { LANGUAGES } from "@/components/pages/settings/constants/settings.constants";
 import { Input } from "@/components/ui/input";
 import {
@@ -11,9 +13,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTimeZone } from "@/hooks/use-time-zone";
 import { APP_NAME } from "@/lib/brand";
 
 export function GeneralSettings() {
+  // TODO(api): saved with the workspace settings (Phase 5). Until then it starts at this device's zone.
+  const deviceZone = useTimeZone();
+  const [timeZone, setTimeZone] = React.useState<string | null>(null);
+
   return (
     <SettingsCard title="General" description="Workspace name, language and regional format.">
       <SettingRow
@@ -40,20 +47,13 @@ export function GeneralSettings() {
       <SettingRow
         htmlFor="default-timezone"
         label="Time zone"
-        description="Used for activity timestamps and reports."
+        description="Used for reports and emails. Times on screen follow each device's time zone."
       >
-        <Select defaultValue="Asia/Kolkata">
-          <SelectTrigger id="default-timezone" className="h-9 w-full">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {TIMEZONES.map((tz) => (
-              <SelectItem key={tz.value} value={tz.value}>
-                {tz.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <TimezoneSelect
+          id="default-timezone"
+          value={timeZone ?? deviceZone ?? "UTC"}
+          onChange={setTimeZone}
+        />
       </SettingRow>
     </SettingsCard>
   );

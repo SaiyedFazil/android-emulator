@@ -2,7 +2,8 @@ import Link from "next/link";
 import { ShieldCheck, ShieldOff } from "lucide-react";
 
 import { EntityAvatar } from "@/components/custom/EntityAvatar";
-import { formatDateTime, formatRelativeTime } from "@/lib/format";
+import { LocalTime } from "@/components/custom/LocalTime";
+import { formatRelativeTime } from "@/lib/format";
 import { SAMPLE_NOW } from "@/lib/sample-time";
 import type { Member } from "@/types/admin.types";
 
@@ -46,13 +47,9 @@ export function RunningCell({ running }: { running: number }) {
 export function LastActiveCell({ at }: { at: string | null }) {
   if (!at) return <span className="text-muted-foreground">Never</span>;
   return (
-    <time
-      dateTime={at}
-      title={formatDateTime(at)}
-      className="whitespace-nowrap text-muted-foreground"
-    >
+    <LocalTime value={at} className="whitespace-nowrap text-muted-foreground">
       {formatRelativeTime(at, SAMPLE_NOW)}
-    </time>
+    </LocalTime>
   );
 }
 

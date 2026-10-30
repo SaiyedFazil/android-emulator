@@ -13,6 +13,7 @@ import {
   toSessionTokens,
 } from "@/lib/auth/backend-auth";
 import { refreshOnce } from "@/lib/auth/refresh-once";
+import dayjs from "@/lib/dayjs";
 
 /** A refused sign-in; `code` reaches the login form (see `loginFailureCode`). */
 class BackendSignInError extends CredentialsSignin {
@@ -45,7 +46,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth(async (request) => {
               },
               forwardedClientHeaders(signInRequest.headers)
             );
-            return { id: user.id, profile: user, tokens: toSessionTokens(tokens, Date.now()) };
+            return {
+              id: user.id,
+              profile: user,
+              tokens: toSessionTokens(tokens, dayjs().valueOf()),
+            };
           } catch (error) {
             // A refusal is the backend's answer; anything else is a fault worth seeing.
             if (!(error instanceof BackendAuthError)) console.error("Sign-in failed:", error);
@@ -62,14 +67,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth(async (request) => {
         const { tokens } = token;
         if (!tokens) return null;
 
-        const state = tokenState(tokens, Date.now());
+        const state = tokenState(tokens, dayjs().valueOf());
         if (state === "valid") return token;
         // Returning null ends the session and clears the cookie.
         if (state === "expired") return null;
 
         try {
           const refreshed = await refreshOnce(tokens.refreshToken, async () =>
-            toSessionTokens(await refreshWithBackend(tokens.refreshToken, client), Date.now())
+            toSessionTokens(
+              await refreshWithBackend(tokens.refreshToken, client),
+              dayjs().valueOf()
+            )
           );
           return { ...token, tokens: refreshed };
         } catch (error) {

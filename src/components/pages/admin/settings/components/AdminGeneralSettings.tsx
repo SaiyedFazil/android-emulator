@@ -2,22 +2,16 @@
 
 import * as React from "react";
 
-import { TIME_ZONES } from "@/components/pages/admin/settings/constants/admin-settings.constants";
+import { TimezoneSelect } from "@/components/custom/TimezoneSelect";
 import { SettingRow, SettingsCard } from "@/components/pages/settings/components/SettingsCard";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { APP_NAME } from "@/lib/brand";
 
 export function AdminGeneralSettings() {
   const [maintenance, setMaintenance] = React.useState(false);
+  const [defaultTimeZone, setDefaultTimeZone] = React.useState("UTC");
 
   return (
     <SettingsCard title="General" description="How the platform presents itself to everyone.">
@@ -40,18 +34,7 @@ export function AdminGeneralSettings() {
         label="Default time zone"
         description="For new organizations and reports."
       >
-        <Select defaultValue="UTC">
-          <SelectTrigger id="default-tz" className="h-9 w-full">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {TIME_ZONES.map((tz) => (
-              <SelectItem key={tz.value} value={tz.value}>
-                {tz.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <TimezoneSelect id="default-tz" value={defaultTimeZone} onChange={setDefaultTimeZone} />
       </SettingRow>
       <SettingRow
         htmlFor="maintenance"

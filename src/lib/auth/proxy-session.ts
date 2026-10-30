@@ -1,6 +1,8 @@
 import { NextRequest } from "next/server";
 import type { Session } from "next-auth";
 
+import dayjs from "@/lib/dayjs";
+
 type SessionHandler = (request: NextRequest) => Promise<Response>;
 
 /**
@@ -62,7 +64,7 @@ export async function readSessionInProxy({
 export function applySetCookies(
   cookieHeader: string,
   setCookies: string[],
-  now: number = Date.now()
+  now: number = dayjs().valueOf()
 ): string {
   const cookies = new Map<string, string>();
   for (const part of cookieHeader.split(";")) {
@@ -84,7 +86,7 @@ export function applySetCookies(
       const key = rawKey.trim().toLowerCase();
       const attributeValue = rest.join("=").trim();
       if (key === "max-age") return Number(attributeValue) <= 0;
-      if (key === "expires") return Date.parse(attributeValue) <= now;
+      if (key === "expires") return !dayjs(attributeValue).isAfter(now);
       return false;
     });
 

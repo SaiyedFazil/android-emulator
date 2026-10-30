@@ -72,9 +72,19 @@ repo) and delete it afterwards; never commit tests, test runners or route checke
 - Colours come only from theme tokens in `src/app/globals.css` — no hex values or `bg-white` in
   components (the one exception is the theme previews in Settings → Appearance).
 - Static data lives in `constants/` files marked `TODO(api)`, until its phase wires it.
-- Sample timestamps use `minutesAgo()` / `SAMPLE_NOW` from `lib/sample-time.ts`; live data formats
-  against `useNow()` (null until mounted). Never call `Date.now()` or `new Date()` during render —
-  Cache Components flags it and hydration would differ.
+- **Time is dayjs only**, imported from `@/lib/dayjs` (never `"dayjs"` directly, never `Date` /
+  `Intl.DateTimeFormat`): it loads the utc, timezone, advancedFormat and relativeTime plugins.
+  Formatters live in `lib/format.ts`.
+- **Times show in the viewer's machine time zone.** Render an absolute date or time with
+  `<LocalTime value={iso} format="date" | "datetime" | "month-year" />` (`components/custom`); pass
+  children for other text (`{formatRelativeTime(iso, now)}`) and it keeps the local-time tooltip.
+  Prerender can't know the zone, so it paints UTC first and switches after mount (`useTimeZone`).
+  Relative times are the same everywhere and can render on the server.
+- Sample timestamps use `minutesAgo()` / `SAMPLE_NOW` (a UTC dayjs) from `lib/sample-time.ts`;
+  live data formats against `useNow()` (null until mounted). Never read the clock during render —
+  Cache Components flags it and hydration would differ. Sample charts bucket by UTC calendar.
+- Time zone pickers use `components/custom/TimezoneSelect` (every IANA zone with today's offset,
+  searchable); `lib/timezones.ts` builds the list. The profile's zone is for emails and reports.
 - Add a dependency only in the change that first imports it.
 
 ## Gotchas

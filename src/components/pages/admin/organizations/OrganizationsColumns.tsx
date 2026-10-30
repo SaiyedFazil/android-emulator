@@ -14,7 +14,8 @@ import { ToneBadge } from "@/components/custom/ToneBadge";
 import { UsageMeter } from "@/components/custom/UsageMeter";
 import { ORG_STATUS } from "@/components/pages/admin/constants/status.constants";
 import type { OrgRow } from "@/components/pages/admin/organizations/utils/organization.utils";
-import { formatCurrency, formatDate } from "@/lib/format";
+import { LocalTime } from "@/components/custom/LocalTime";
+import { formatCurrency } from "@/lib/format";
 
 const STATUS_ORDER = { active: 0, trialing: 1, past_due: 2, suspended: 3 };
 
@@ -129,12 +130,11 @@ export const ORGANIZATION_COLUMNS: DataTableColumnDef<OrgRow>[] = [
     accessorFn: (row) => row.org.createdAt,
     header: ({ column }) => <ColumnHeader column={column} title="Created" />,
     cell: ({ row }) => (
-      <time
-        dateTime={row.original.org.createdAt}
+      <LocalTime
+        value={row.original.org.createdAt}
+        format="date"
         className="whitespace-nowrap text-muted-foreground"
-      >
-        {formatDate(row.original.org.createdAt)}
-      </time>
+      />
     ),
     meta: { label: "Created" },
   },

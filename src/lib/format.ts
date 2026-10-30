@@ -1,39 +1,38 @@
-const UNITS: [Intl.RelativeTimeFormatUnit, number][] = [
-  ["year", 60 * 60 * 24 * 365],
-  ["month", 60 * 60 * 24 * 30],
-  ["week", 60 * 60 * 24 * 7],
-  ["day", 60 * 60 * 24],
-  ["hour", 60 * 60],
-  ["minute", 60],
-];
+import dayjs, { type ConfigType } from "@/lib/dayjs";
 
-const relative = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+const DATE_FORMAT = "MMM D, YYYY";
+const DATE_TIME_FORMAT = "MMM D, YYYY, h:mm A";
+const MONTH_YEAR_FORMAT = "MMMM YYYY";
+const JUST_NOW_SECONDS = 60;
 
-/** "2 minutes ago", "yesterday", "3 days ago" — under a minute reads "just now". */
-export function formatRelativeTime(iso: string, now: Date = new Date()): string {
-  const seconds = Math.round((new Date(iso).getTime() - now.getTime()) / 1000);
-  for (const [unit, size] of UNITS) {
-    if (Math.abs(seconds) >= size) return relative.format(Math.round(seconds / size), unit);
-  }
-  return "just now";
+/** "2 minutes ago", "3 days ago" — under a minute reads "just now". The same in every time zone. */
+export function formatRelativeTime(value: ConfigType, now: ConfigType): string {
+  const time = dayjs(value);
+  return Math.abs(time.diff(now, "second")) < JUST_NOW_SECONDS ? "just now" : time.from(now);
 }
 
-// Pinned to UTC (and labelled) so prerendered HTML and every viewer agree, wherever they are.
-const dateTime = new Intl.DateTimeFormat("en", {
-  dateStyle: "medium",
-  timeStyle: "short",
-  timeZone: "UTC",
-});
-
-export function formatDateTime(iso: string): string {
-  return `${dateTime.format(new Date(iso))} UTC`;
+/**
+ * A date in the viewer's time zone. Without one (prerender, before hydration) it is the UTC date,
+ * so server and browser render the same text until `<LocalTime>` switches to the viewer's zone.
+ */
+function inZone(value: ConfigType, timeZone: string | null | undefined) {
+  return timeZone ? dayjs(value).tz(timeZone) : dayjs.utc(value);
 }
 
-const date = new Intl.DateTimeFormat("en", { dateStyle: "medium", timeZone: "UTC" });
+/** "Oct 19, 2026, 2:30 PM" in `timeZone`; "Oct 19, 2026, 9:00 AM UTC" without one. */
+export function formatDateTime(value: ConfigType, timeZone?: string | null): string {
+  const text = inZone(value, timeZone).format(DATE_TIME_FORMAT);
+  return timeZone ? text : `${text} UTC`;
+}
 
-/** "Oct 19, 2026" — the UTC calendar date. */
-export function formatDate(iso: string): string {
-  return date.format(new Date(iso));
+/** "Oct 19, 2026" — the calendar date in `timeZone` (UTC without one). */
+export function formatDate(value: ConfigType, timeZone?: string | null): string {
+  return inZone(value, timeZone).format(DATE_FORMAT);
+}
+
+/** "October 2026" in `timeZone` (UTC without one). */
+export function formatMonthYear(value: ConfigType, timeZone?: string | null): string {
+  return inZone(value, timeZone).format(MONTH_YEAR_FORMAT);
 }
 
 // TODO(api): a single currency until billing supports more.

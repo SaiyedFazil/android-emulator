@@ -1,11 +1,10 @@
 "use client";
 
-import * as React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { toast } from "sonner";
 
-import { TIMEZONES } from "@/components/pages/profile/constants/profile.constants";
+import { TimezoneSelect } from "@/components/custom/TimezoneSelect";
 import {
   profileFormValues,
   profilePatch,
@@ -22,13 +21,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ME_QUERY_KEY, useMe } from "@/hooks/use-me";
 import { getApiError } from "@/lib/api/api-error";
@@ -72,15 +64,6 @@ export function PersonalDetailsForm() {
       }
     },
   });
-
-  // The user's own zone stays selectable even when the short list doesn't name it.
-  const timezones = React.useMemo(
-    () =>
-      me && !TIMEZONES.some((tz) => tz.value === me.timezone)
-        ? [{ value: me.timezone, label: me.timezone }, ...TIMEZONES]
-        : TIMEZONES,
-    [me]
-  );
 
   if (!me) {
     return (
@@ -151,21 +134,14 @@ export function PersonalDetailsForm() {
           </div>
           <div className="flex flex-col gap-2 sm:col-span-2">
             <Label htmlFor="timezone">Time zone</Label>
-            <Select
+            <TimezoneSelect
+              id="timezone"
               value={formik.values.timezone}
-              onValueChange={(timezone) => formik.setFieldValue("timezone", timezone)}
-            >
-              <SelectTrigger id="timezone" className="h-9 w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {timezones.map((tz) => (
-                  <SelectItem key={tz.value} value={tz.value}>
-                    {tz.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              onChange={(timezone) => formik.setFieldValue("timezone", timezone)}
+            />
+            <p className="text-xs text-muted-foreground">
+              For emails and reports. Times on screen follow this device&apos;s time zone.
+            </p>
           </div>
         </CardContent>
         <CardFooter className="justify-end gap-2 border-t pt-4">

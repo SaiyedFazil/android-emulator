@@ -6,7 +6,8 @@ import { HOST_STATUS } from "@/components/pages/admin/constants/status.constants
 import { HostActions } from "@/components/pages/admin/hosts/components/HostActions";
 import { hostSlotsUsed } from "@/components/pages/admin/utils/admin.selectors";
 import { Card } from "@/components/ui/card";
-import { formatDateTime, formatRelativeTime } from "@/lib/format";
+import { LocalTime } from "@/components/custom/LocalTime";
+import { formatRelativeTime } from "@/lib/format";
 import { SAMPLE_NOW } from "@/lib/sample-time";
 import { cn } from "@/lib/utils";
 import type { Host } from "@/types/admin.types";
@@ -59,9 +60,9 @@ export function HostCard({ host }: { host: Host }) {
             Last heartbeat
           </dt>
           <dd className={cn("font-medium", offline && "text-status-offline-foreground")}>
-            <time dateTime={host.lastHeartbeatAt} title={formatDateTime(host.lastHeartbeatAt)}>
+            <LocalTime value={host.lastHeartbeatAt}>
               {formatRelativeTime(host.lastHeartbeatAt, SAMPLE_NOW)}
-            </time>
+            </LocalTime>
           </dd>
         </div>
       </dl>

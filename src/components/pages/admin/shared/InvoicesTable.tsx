@@ -14,7 +14,8 @@ import { ToneBadge } from "@/components/custom/ToneBadge";
 import { INVOICE_STATUS } from "@/components/pages/admin/constants/status.constants";
 import { getOrganization } from "@/components/pages/admin/utils/admin.selectors";
 import { Card } from "@/components/ui/card";
-import { formatCurrency, formatDate } from "@/lib/format";
+import { LocalTime } from "@/components/custom/LocalTime";
+import { formatCurrency } from "@/lib/format";
 import type { Invoice, InvoiceStatus } from "@/types/admin.types";
 
 type StatusFilter = "all" | InvoiceStatus;
@@ -69,9 +70,7 @@ function InvoiceRowActions({ invoice }: { invoice: Invoice }) {
 function DateCell({ iso }: { iso: string | null }) {
   if (!iso) return <span className="text-muted-foreground">—</span>;
   return (
-    <time dateTime={iso} className="whitespace-nowrap text-muted-foreground">
-      {formatDate(iso)}
-    </time>
+    <LocalTime value={iso} format="date" className="whitespace-nowrap text-muted-foreground" />
   );
 }
 

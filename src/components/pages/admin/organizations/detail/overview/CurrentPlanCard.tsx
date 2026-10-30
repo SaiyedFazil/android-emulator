@@ -5,13 +5,14 @@ import { DetailList } from "@/components/custom/DetailList";
 import { PlanBadge } from "@/components/custom/PlanBadge";
 import { UsageMeter } from "@/components/custom/UsageMeter";
 import { ChangePlanButton } from "@/components/pages/admin/organizations/detail/overview/ChangePlanButton";
+import { LocalTime } from "@/components/custom/LocalTime";
 import {
   cycleAmount,
   getPlan,
   organizationUsage,
   subscriptionFor,
 } from "@/components/pages/admin/utils/admin.selectors";
-import { formatDate, formatPrice } from "@/lib/format";
+import { formatPrice } from "@/lib/format";
 import type { Organization } from "@/types/admin.types";
 
 export function CurrentPlanCard({ org }: { org: Organization }) {
@@ -42,14 +43,14 @@ export function CurrentPlanCard({ org }: { org: Organization }) {
         columns={2}
         items={[
           { label: "Billing cycle", value: yearly ? "Yearly" : "Monthly" },
-          { label: "Started", value: formatDate(subscription.startedAt) },
+          { label: "Started", value: <LocalTime value={subscription.startedAt} format="date" /> },
           {
             label: subscription.trialEndsAt
               ? "Trial ends"
               : subscription.cancelAtPeriodEnd
                 ? "Ends"
                 : "Renews",
-            value: renewal ? formatDate(renewal) : "—",
+            value: renewal ? <LocalTime value={renewal} format="date" /> : "—",
           },
           {
             label: "Payment method",

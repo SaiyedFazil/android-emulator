@@ -2,14 +2,13 @@
 
 import { CalendarDays, Mail, ShieldCheck } from "lucide-react";
 
+import { LocalTime } from "@/components/custom/LocalTime";
 import { roleLabel } from "@/components/pages/profile/utils/profile.utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMe } from "@/hooks/use-me";
-
-const joined = new Intl.DateTimeFormat("en", { month: "long", year: "numeric", timeZone: "UTC" });
 
 export function ProfileHeader() {
   const { data: me } = useMe();
@@ -48,7 +47,7 @@ export function ProfileHeader() {
               </span>
               <span className="flex items-center gap-1.5">
                 <CalendarDays className="size-3.5" aria-hidden="true" />
-                Joined {joined.format(new Date(me.createdAt))}
+                Joined <LocalTime value={me.createdAt} format="month-year" />
               </span>
             </div>
           </div>

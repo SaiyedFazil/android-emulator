@@ -11,7 +11,8 @@ import { PlanBadge } from "@/components/custom/PlanBadge";
 import { RowActions } from "@/components/custom/RowActions";
 import { ToneBadge } from "@/components/custom/ToneBadge";
 import { SUBSCRIPTION_STATUS } from "@/components/pages/admin/constants/status.constants";
-import { formatDate, formatPrice } from "@/lib/format";
+import { LocalTime } from "@/components/custom/LocalTime";
+import { formatPrice } from "@/lib/format";
 import type { Organization, Plan, Subscription } from "@/types/admin.types";
 
 export interface SubscriptionRow {
@@ -79,7 +80,9 @@ function RenewalCell({ subscription }: { subscription: Subscription }) {
       : "Renews";
   return (
     <span className="flex flex-col whitespace-nowrap">
-      <span>{formatDate(date)}</span>
+      <span>
+        <LocalTime value={date} format="date" />
+      </span>
       <span className="text-xs text-muted-foreground">{label}</span>
     </span>
   );
@@ -159,7 +162,7 @@ export const SUBSCRIPTION_COLUMNS: DataTableColumnDef<SubscriptionRow>[] = [
     header: ({ column }) => <ColumnHeader column={column} title="Started" />,
     cell: ({ row }) => (
       <span className="whitespace-nowrap text-muted-foreground">
-        {formatDate(row.original.subscription.startedAt)}
+        <LocalTime value={row.original.subscription.startedAt} format="date" />
       </span>
     ),
     meta: { label: "Started" },

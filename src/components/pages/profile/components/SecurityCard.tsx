@@ -9,11 +9,12 @@ import { ChangePasswordSheet } from "@/components/pages/profile/components/Chang
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LocalTime } from "@/components/custom/LocalTime";
 import { useMe } from "@/hooks/use-me";
 import { useNow } from "@/hooks/use-now";
 import { getApiError } from "@/lib/api/api-error";
 import { meApi } from "@/lib/api/me/me-api";
-import { formatDateTime, formatRelativeTime } from "@/lib/format";
+import { formatRelativeTime } from "@/lib/format";
 
 export function SecurityCard() {
   const { data: me } = useMe();
@@ -44,9 +45,9 @@ export function SecurityCard() {
             {me && now ? (
               <span className="text-xs text-muted-foreground">
                 {changedAt ? (
-                  <time dateTime={changedAt} title={formatDateTime(changedAt)}>
+                  <LocalTime value={changedAt}>
                     Changed {formatRelativeTime(changedAt, now)}
-                  </time>
+                  </LocalTime>
                 ) : (
                   "Never changed"
                 )}
