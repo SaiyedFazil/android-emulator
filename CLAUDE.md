@@ -45,9 +45,14 @@ reference for wiring pages to the API, phase by phase, each phase with its front
 - `src/proxy.ts` routes by the session's role (`resolveAccess`); it only redirects, the API
   enforces access. Pages reached from emailed links (`AUTH_FLOW_PATHS`) are open to everyone and
   remove `?token=` from the URL (`useLinkToken`).
-- API ids are uuids (`id: string`). API enum values are `UPPER_SNAKE_CASE` (`"ACTIVE"`,
-  `"ORGANIZATION_ADMIN"`): the lowercase unions in `src/types/` change to them as each area is
-  wired, and screens show labels from label maps, never raw values.
+- The API keys everything by **`uuid`** (`uuid: string`, `organization.uuid`, `…Uuid` references,
+  `:uuid` in paths) — never `id`, which is the backend's internal key and never sent. API types use
+  `uuid`; the sample types in `src/types/` (still `id`) switch to it as each area is wired. API enum
+  values are `UPPER_SNAKE_CASE` (`"ACTIVE"`, `"ORGANIZATION_ADMIN"`): the lowercase unions change to
+  them the same way, and screens show labels from label maps, never raw values.
+- The session (`GET /auth/session`) carries only `accessToken` and `user: { uuid, role }` — enough
+  for the API client, routing and the profile cache. Everything else about the user comes from
+  `GET /me`.
 - Theme moves to a `theme` cookie (Phase 5); language and density are being removed.
 - Stay static until their phase (keep sample data and `TODO(api)`): billing, subscriptions,
   invoices, hosts, emulators, the console dashboard, notifications and search, admin Settings, and

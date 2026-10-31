@@ -13,7 +13,7 @@ export function readStoredMe(userId: string | undefined): Me | undefined {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     const me = raw ? (JSON.parse(raw) as Partial<Me> | null) : null;
-    return me?.id === userId && typeof me.email === "string" ? (me as Me) : undefined;
+    return me?.uuid === userId && typeof me.email === "string" ? (me as Me) : undefined;
   } catch {
     // Storage blocked (private mode, disabled) or a broken value: fetch instead.
     return undefined;

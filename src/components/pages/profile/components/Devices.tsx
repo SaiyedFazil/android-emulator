@@ -108,7 +108,7 @@ export function Devices() {
 
   const revokeOne = useMutation({
     mutationFn: (session: ApiSession) =>
-      session.isCurrent ? signOutOfApp() : authApi.revokeSession(session.id),
+      session.isCurrent ? signOutOfApp() : authApi.revokeSession(session.uuid),
     onSuccess: (_, session) => {
       if (session.isCurrent) return;
       toast.success("Device signed out");
@@ -170,7 +170,7 @@ export function Devices() {
           <ul className="flex flex-col divide-y">
             {sessions.data.map((session) => (
               <DeviceRow
-                key={session.id}
+                key={session.uuid}
                 session={session}
                 now={now}
                 busy={busy}

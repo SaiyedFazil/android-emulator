@@ -46,9 +46,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth(async (request) => {
               },
               forwardedClientHeaders(signInRequest.headers)
             );
+            // Only who signed in and their role; the profile comes from GET /me.
             return {
-              id: user.id,
-              profile: user,
+              id: user.uuid,
+              uuid: user.uuid,
+              role: user.role,
               tokens: toSessionTokens(tokens, dayjs().valueOf()),
             };
           } catch (error) {
@@ -61,11 +63,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth(async (request) => {
     ],
     callbacks: {
       async jwt({ token, user }) {
-        if (user?.profile && user.tokens) {
-          return { sub: user.profile.id, profile: user.profile, tokens: user.tokens };
+        if (user?.uuid && user.role && user.tokens) {
+          return {
+            sub: user.uuid,
+            user: { uuid: user.uuid, role: user.role },
+            tokens: user.tokens,
+          };
         }
         const { tokens } = token;
-        if (!tokens) return null;
+        // A cookie without both (e.g. written by an older version) ends the session: sign in again.
+        if (!tokens || !token.user) return null;
 
         const state = tokenState(tokens, dayjs().valueOf());
         if (state === "valid") return token;
@@ -92,7 +99,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth(async (request) => {
         return {
           expires: session.expires,
           accessToken: token.tokens?.accessToken ?? "",
-          user: token.profile!,
+          user: token.user!,
         };
       },
     },

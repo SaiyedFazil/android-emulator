@@ -16,16 +16,16 @@ export interface TokenPair {
   persistent: boolean;
 }
 
-/** The signed-in user, as sign-in returns it. */
+/** The signed-in user, as sign-in returns it. The API keys everything by `uuid`, never `id`. */
 export interface AuthUser {
-  id: string;
+  uuid: string;
   email: string;
   username: string | null;
   firstName: string;
   lastName: string;
   role: ApiRole;
   status: UserStatus;
-  organization: { id: string; name: string } | null;
+  organization: { uuid: string; name: string } | null;
 }
 
 /** `GET /me`: the user plus their profile. */
@@ -41,7 +41,7 @@ export interface Me extends AuthUser {
 
 /** One signed-in device, from `GET /auth/sessions`. */
 export interface ApiSession {
-  id: string;
+  uuid: string;
   deviceName: string | null;
   deviceType: DeviceType | null;
   location: string | null;

@@ -19,7 +19,7 @@ export const ME_QUERY_KEY = ["me"] as const;
  */
 export function useMe() {
   const { data: session, status } = useSession();
-  const userId = session?.user?.id;
+  const userId = session?.user?.uuid;
 
   const query = useQuery({
     queryKey: [...ME_QUERY_KEY, userId],
