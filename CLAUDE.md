@@ -85,6 +85,9 @@ repo) and delete it afterwards; never commit tests, test runners or route checke
 - `components/common/` app chrome · `components/custom/` shared components · `components/ui/` shadcn primitives.
 - Colours come only from theme tokens in `src/app/globals.css` — no hex values or `bg-white` in
   components (the one exception is the theme previews in Settings → Appearance).
+- **CSP** (`next.config.ts`): scripts, styles, fonts and images only from this site; requests only
+  to this site and `NEXT_PUBLIC_API_URL`. A new external origin (CDN, analytics, another API)
+  must be added to the policy deliberately, or the browser blocks it.
 - Static data lives in `constants/` files marked `TODO(api)`, until its phase wires it.
 - **Time is dayjs only**, imported from `@/lib/dayjs` (never `"dayjs"` directly, never `Date` /
   `Intl.DateTimeFormat`): it loads the utc, timezone, advancedFormat and relativeTime plugins.

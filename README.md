@@ -62,6 +62,12 @@ There are no automated tests in this repository; the frontend is tested by hand.
 - **Routing:** `src/proxy.ts` reads the session (saving a refreshed cookie) and keeps each role in
   its area: platform staff in `/admin`, organization users in the console. It only redirects; the
   API enforces access. `/forgot-password`, `/reset-password` and `/accept-invite` are open to all.
+- **Security headers** (`next.config.ts`) on every page: a Content-Security-Policy that lets the
+  browser run only this site's scripts and send requests only to this site and the API
+  (`NEXT_PUBLIC_API_URL`), so an injected script can't load from elsewhere or send the access
+  token out; plus `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy` and
+  `Permissions-Policy`. Inline scripts stay allowed (a per-request nonce would make every page
+  dynamic). Adding a third-party script, font or API means adding its origin to the policy.
 - **In production**, run Next behind a reverse proxy such as nginx that sets `X-Forwarded-For`
   (`$proxy_add_x_forwarded_for`), `X-Forwarded-Proto` and `Host`; Next only adds the header when it
   is missing.
