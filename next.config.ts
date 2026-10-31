@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const isDev = process.env.NODE_ENV === "development";
 
 /** The API's origin: the only other server the browser may send requests to. */
-const apiOrigin = new URL(process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001").origin;
+const apiOrigin = new URL(process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api/v1").origin;
 
 /**
  * Content-Security-Policy: the browser runs only this site's scripts and talks only to this site
