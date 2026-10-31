@@ -24,13 +24,18 @@ reference for wiring pages to the API, phase by phase, each phase with its front
   (`lib/auth/backend-auth.ts`, native fetch), forwarding `User-Agent` / `X-Forwarded-For`; a refresh
   happens once per refresh token (`lib/auth/refresh-once.ts`). A refused refresh returns `null` from
   the `jwt` callback, which ends the session and clears the cookie.
-- **API calls** go from the browser through `lib/axios.ts` (Bearer; a 401 reads the session once,
+- **No `next-auth/react` in the browser.** Sign-in and sign-out are Server Actions
+  (`lib/auth/auth-actions.ts`: one request each, CSRF-protected by Next.js). The browser reads the
+  session with `lib/auth/session-client.ts`: one `GET /auth/session` per page load, shared by every
+  caller (`useSession`, `getAccessToken`, `readSession`), read again only after sign-in and when
+  the API refuses the token. No re-read on tab focus, no cross-tab broadcast.
+- **API calls** go from the browser through `lib/axios.ts` (Bearer; a 401 re-reads the session once,
   retries once, then `signOutTo(login?next=…)`). One object of typed calls per area in
   `lib/api/<area>/<area>-api.ts` returning `ApiResponse<T>` (`{ message, data }`); errors are read
   with `getApiError(error)` (`{ status, code, message, details }`) — no `err as {…}` casts.
 - **Data** is fetched in client components with TanStack Query (`useQuery`; `useMutation` +
   `setQueryData` / `invalidateQueries`). Never read the session or the API in a Server Component:
-  pages stay static shells and `AuthProvider` loads the session in the browser.
+  pages stay static shells and `session-client` loads the session in the browser.
 - **The signed-in profile** (`useMe`, query `["me", userId]`) is fetched once per sign-in and kept in
   localStorage (`lib/auth/me-storage.ts`), so reloads don't call `GET /me`. Change it through the
   query (`setQueriesData` / `invalidateQueries` on `ME_QUERY_KEY`) and the stored copy follows. It

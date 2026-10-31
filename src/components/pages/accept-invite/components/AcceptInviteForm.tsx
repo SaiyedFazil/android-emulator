@@ -4,7 +4,6 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useFormik } from "formik";
-import { signOut } from "next-auth/react";
 import { AtSign } from "lucide-react";
 
 import {
@@ -19,6 +18,7 @@ import {
 import { useLinkToken } from "@/hooks/use-link-token";
 import { getApiError } from "@/lib/api/api-error";
 import { authApi } from "@/lib/api/auth/auth-api";
+import { signOutAction } from "@/lib/auth/auth-actions";
 import { LOGIN_PATH } from "@/lib/auth/roles";
 import { acceptInvitationSchema, PASSWORD_MIN_LENGTH } from "@/lib/validation";
 
@@ -75,7 +75,7 @@ export function AcceptInviteForm() {
         return;
       }
       // Start clean: a session from another account in this browser must not carry over.
-      await signOut({ redirect: false });
+      await signOutAction();
       router.replace("/login?welcome=1");
     },
   });

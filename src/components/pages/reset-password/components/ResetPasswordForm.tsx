@@ -4,7 +4,6 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useFormik } from "formik";
-import { signOut } from "next-auth/react";
 
 import {
   AuthHeading,
@@ -17,6 +16,7 @@ import {
 import { useLinkToken } from "@/hooks/use-link-token";
 import { getApiError } from "@/lib/api/api-error";
 import { authApi } from "@/lib/api/auth/auth-api";
+import { signOutAction } from "@/lib/auth/auth-actions";
 import { PASSWORD_MIN_LENGTH, resetPasswordSchema } from "@/lib/validation";
 
 function InvalidResetLink() {
@@ -62,7 +62,7 @@ export function ResetPasswordForm() {
         return;
       }
       // Every session of the account just ended; drop this browser's too, then sign in.
-      await signOut({ redirect: false });
+      await signOutAction();
       router.replace("/login?reset=1");
     },
   });

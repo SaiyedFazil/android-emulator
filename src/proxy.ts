@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { handlers } from "@/auth";
+import { AUTH_BASE_PATH } from "@/auth.config";
 import { readSessionInProxy } from "@/lib/auth/proxy-session";
 import { areaOf, areaRoleOf, resolveAccess } from "@/lib/auth/roles";
 
@@ -14,7 +15,11 @@ export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
   // Auth.js's own endpoints, and pages reached from emailed links, need no session.
-  if (pathname === "/auth" || pathname.startsWith("/auth/") || areaOf(pathname) === "auth-flow") {
+  if (
+    pathname === AUTH_BASE_PATH ||
+    pathname.startsWith(`${AUTH_BASE_PATH}/`) ||
+    areaOf(pathname) === "auth-flow"
+  ) {
     return NextResponse.next();
   }
 

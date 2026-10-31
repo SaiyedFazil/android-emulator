@@ -4,7 +4,6 @@ import * as React from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useFormik } from "formik";
-import { getSession, signIn } from "next-auth/react";
 import { ArrowRight, ShieldCheck, UserRound } from "lucide-react";
 
 import {
@@ -17,9 +16,11 @@ import {
 import { Reveal } from "@/components/pages/login/components/Reveal";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { signInAction, type SignInResult } from "@/lib/auth/auth-actions";
 import { loginErrorMessage } from "@/lib/auth/login-errors";
 import { clearStoredMe } from "@/lib/auth/me-storage";
 import { areaRoleOf, safeNext } from "@/lib/auth/roles";
+import { readSession } from "@/lib/auth/session-client";
 import { loginSchema } from "@/lib/validation";
 
 interface LoginValues {
@@ -58,18 +59,20 @@ export function LoginForm() {
     validateOnBlur: false,
     onSubmit: async ({ identifier, password, rememberMe }) => {
       setServerError(null);
-      const result = await signIn("credentials", {
+      // One request: the Server Action signs in on the Next server and sets the session cookie.
+      const result = await signInAction({
         identifier: identifier.trim(),
         password,
-        rememberMe: String(rememberMe),
-        redirect: false,
-      });
-      if (!result?.ok || result.error) {
-        setServerError(loginErrorMessage(result?.code));
+        rememberMe,
+      }).catch((): SignInResult => ({ ok: false, code: "SIGN_IN_FAILED" }));
+      if (!result.ok) {
+        setServerError(loginErrorMessage(result.code));
         return;
       }
-      const session = await getSession();
-      if (!session?.user) {
+      // The one session read of this page: its role picks the destination, and the next page
+      // reuses it.
+      const session = await readSession();
+      if (!session) {
         setServerError(loginErrorMessage(undefined));
         return;
       }

@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import type { Session } from "next-auth";
 
+import { AUTH_BASE_PATH } from "@/auth.config";
 import dayjs from "@/lib/dayjs";
 
 type SessionHandler = (request: NextRequest) => Promise<Response>;
@@ -50,7 +51,7 @@ export async function readSessionInProxy({
 
   try {
     const response = await handler(
-      new NextRequest(new URL("/auth/session", requestUrl), { headers: forwarded })
+      new NextRequest(new URL(`${AUTH_BASE_PATH}/session`, requestUrl), { headers: forwarded })
     );
     const setCookies = response.headers.getSetCookie();
     const session = response.ok ? ((await response.json()) as Session | null) : null;

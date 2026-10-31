@@ -2,10 +2,10 @@
 
 import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
 
 import { meApi } from "@/lib/api/me/me-api";
 import { readStoredMe, storeMe } from "@/lib/auth/me-storage";
+import { useSession } from "@/lib/auth/session-client";
 
 /** Prefix of the profile query: `["me", userId]`. Invalidate or update it with this key. */
 export const ME_QUERY_KEY = ["me"] as const;

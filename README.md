@@ -48,14 +48,17 @@ There are no automated tests in this repository; the frontend is tested by hand.
 
 - **Session:** Auth.js v5 (`src/auth.ts`, Credentials provider) keeps the backend's access and
   refresh tokens in one encrypted, `HttpOnly` cookie. Page JavaScript can't read it; the browser
-  only receives the access token from `GET /auth/session`.
+  only receives the access token, from one `GET /auth/session` per page load
+  (`lib/auth/session-client.ts`, shared by everything that needs it).
+- **Sign-in and sign-out are Server Actions** (`lib/auth/auth-actions.ts`): one request each,
+  protected against cross-site use by Next.js.
 - **Sign-in and refresh run on the Next server.** The refresh happens when less than a minute of
   the access token is left, once per refresh token (`lib/auth/refresh-once.ts`), however many tabs
   or requests need it. The browser's `User-Agent` and `X-Forwarded-For` are forwarded, so the
   backend's Devices list and rate limits see the real client. A refused refresh ends the session.
 - **API calls go from the browser** through `src/lib/axios.ts` with `Authorization: Bearer`, so
-  they show in the Network tab. A `401` reads the session once (the server refreshes) and retries
-  once; if that fails, the user is signed out and sent to `/login?next=<page>`.
+  they show in the Network tab. A `401` re-reads the session once (the server refreshes) and
+  retries once; if that fails, the user is signed out and sent to `/login?next=<page>`.
 - **Routing:** `src/proxy.ts` reads the session (saving a refreshed cookie) and keeps each role in
   its area: platform staff in `/admin`, organization users in the console. It only redirects; the
   API enforces access. `/forgot-password`, `/reset-password` and `/accept-invite` are open to all.
@@ -71,7 +74,7 @@ src/
   proxy.ts                Routing by session and role
   app/                    Routes — each page.tsx only sets metadata and renders a page component
   components/
-    common/               App chrome (AppShell, AppSidebar, AppNavbar, …), AuthProvider, QueryProvider
+    common/               App chrome (AppShell, AppSidebar, AppNavbar, …), QueryProvider
     custom/               Shared components: data-table/, PageHeader, StatusBadge, SectionTabs, …
     pages/<route>/        Page content: <Route>.tsx plus components/, constants/, utils/
     ui/                   shadcn/ui primitives (generated — edit with care)

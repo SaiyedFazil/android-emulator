@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
-import { AuthProvider } from "@/components/common/AuthProvider";
 import { QueryProvider } from "@/components/common/QueryProvider";
 import { ThemeProvider } from "@/components/common/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
@@ -32,16 +31,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full">
-        <AuthProvider>
-          <QueryProvider>
-            <ThemeProvider>
-              <TooltipProvider delayDuration={200}>
-                {children}
-                <Toaster richColors position="bottom-right" />
-              </TooltipProvider>
-            </ThemeProvider>
-          </QueryProvider>
-        </AuthProvider>
+        <QueryProvider>
+          <ThemeProvider>
+            <TooltipProvider delayDuration={200}>
+              {children}
+              <Toaster richColors position="bottom-right" />
+            </TooltipProvider>
+          </ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );
