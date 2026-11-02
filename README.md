@@ -24,12 +24,20 @@ cp .env.example .env.local   # then set AUTH_SECRET (see below)
 npm run dev                  # http://localhost:5000
 ```
 
-| Variable                    | Example                        | What it is                                                                                   |
-| --------------------------- | ------------------------------ | -------------------------------------------------------------------------------------------- |
-| `AUTH_SECRET`               | `npx auth secret`              | Encrypts the session cookie. Required; keep it secret and the same on every frontend server. |
-| `AUTH_SESSION_MAX_AGE_DAYS` | `30`                           | Lifetime of the session cookie; at least the backend's `REFRESH_TTL_DAYS_PERSISTENT`.        |
-| `NEXT_PUBLIC_API_URL`       | `http://localhost:5001/api/v1` | The API as the browser reaches it. Built into the client bundle: rebuild after changing it.  |
-| `API_URL`                   | _(empty)_                      | The API as the Next server reaches it (sign-in, refresh). Empty means `NEXT_PUBLIC_API_URL`. |
+| Variable                    | Example                        | What it is                                                                                     |
+| --------------------------- | ------------------------------ | ---------------------------------------------------------------------------------------------- |
+| `AUTH_SECRET`               | `npx auth secret`              | Encrypts the session cookie. Required; keep it secret and the same on every frontend server.   |
+| `AUTH_SESSION_MAX_AGE_DAYS` | `30`                           | Lifetime of the session cookie; at least the backend's `REFRESH_TTL_DAYS_PERSISTENT`.          |
+| `NEXT_PUBLIC_API_URL`       | `http://localhost:5001/api/v1` | The API as the browser reaches it. Built into the client bundle: rebuild after changing it.    |
+| `API_URL`                   | _(empty)_                      | The API as the Next server reaches it (sign-in, refresh). Empty means `NEXT_PUBLIC_API_URL`.   |
+| `DEV_HOST`                  | _(empty)_                      | Development only: this machine's network IP, to open `npm run dev` from other devices (below). |
+
+**Opening the dev server from other devices.** `npm run dev` listens on every network interface
+(`-H 0.0.0.0`), so anyone on the same network can open `http://<your-ip>:5000`. For it to work:
+
+- set `DEV_HOST=<your-ip>` (allows Next's dev resources and hot reload for that address);
+- set `NEXT_PUBLIC_API_URL=http://<your-ip>:5001/api/v1` (the other device's `localhost` is itself);
+- add `http://<your-ip>:5000` to the backend's `CORS_ORIGINS`.
 
 The backend must allow this origin (`CORS_ORIGINS`) and trust the Next server as a proxy
 (`TRUST_PROXY=loopback` when both run on one machine), so sessions record the browser's IP.

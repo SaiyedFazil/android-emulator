@@ -6,6 +6,14 @@ const isDev = process.env.NODE_ENV === "development";
 const apiOrigin = new URL(process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api/v1").origin;
 
 /**
+ * This machine's network address (e.g. 192.168.1.2) when the dev server is opened from other
+ * devices; set in `.env.local`, empty otherwise. Next.js only serves its dev resources to hosts it
+ * is told about, and the browser opens the hot-reload WebSocket on port 5000 (`npm run dev`).
+ */
+const devHost = isDev ? process.env.DEV_HOST?.trim() || null : null;
+const devSockets = devHost ? ` ws://localhost:5000 ws://${devHost}:5000` : "";
+
+/**
  * Content-Security-Policy: the browser runs only this site's scripts and talks only to this site
  * and the API, so an injected script can neither load from elsewhere nor send the access token
  * out. Inline scripts stay allowed: prerendered pages carry Next.js's inline bootstrap and the
@@ -18,7 +26,7 @@ const contentSecurityPolicy = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self'",
-  `connect-src 'self' ${apiOrigin}`,
+  `connect-src 'self' ${apiOrigin}${devSockets}`,
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
@@ -35,6 +43,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  ...(devHost ? { allowedDevOrigins: [devHost] } : {}),
   cacheComponents: true,
   partialPrefetching: true,
   devIndicators: { position: "bottom-right" },
