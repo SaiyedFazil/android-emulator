@@ -8,7 +8,6 @@ import { toast } from "sonner";
 import { DataTable } from "@/components/custom/data-table";
 import { DataTableSkeleton } from "@/components/custom/data-table/DataTableSkeleton";
 import { PageHeader } from "@/components/custom/PageHeader";
-import { AccessLevels } from "@/components/pages/admin/team/components/AccessLevels";
 import { ConfirmActionDialog } from "@/components/pages/admin/team/components/ConfirmActionDialog";
 import { InviteAdminSheet } from "@/components/pages/admin/team/components/InviteAdminSheet";
 import { TEAM_QUERY_KEY } from "@/components/pages/admin/team/constants/team.constants";
@@ -144,23 +143,20 @@ export function Team() {
           ) : null
         }
       />
-      <div className="grid items-start gap-4 xl:grid-cols-3">
-        <div className="min-w-0 xl:col-span-2">
-          {team.isPending ? (
-            <DataTableSkeleton rows={4} />
-          ) : team.isError ? (
-            <div className="flex flex-col items-start gap-3 rounded-xl border bg-card p-6">
-              <p className="text-sm text-destructive">{getApiError(team.error).message}</p>
-              <Button variant="outline" size="sm" onClick={() => void team.refetch()}>
-                <RotateCw />
-                Try again
-              </Button>
-            </div>
-          ) : (
-            <DataTable columns={columns} data={team.data} disablePagination hidePagination />
-          )}
-        </div>
-        <AccessLevels />
+      <div className="min-w-0">
+        {team.isPending ? (
+          <DataTableSkeleton rows={4} />
+        ) : team.isError ? (
+          <div className="flex flex-col items-start gap-3 rounded-xl border bg-card p-6">
+            <p className="text-sm text-destructive">{getApiError(team.error).message}</p>
+            <Button variant="outline" size="sm" onClick={() => void team.refetch()}>
+              <RotateCw />
+              Try again
+            </Button>
+          </div>
+        ) : (
+          <DataTable columns={columns} data={team.data} disablePagination hidePagination />
+        )}
       </div>
       {canManage ? (
         <>
