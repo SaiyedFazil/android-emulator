@@ -1,12 +1,13 @@
 import type {
-  AdminAccess,
   HostStatus,
   InvoiceStatus,
   MemberStatus,
   OrgRole,
   OrgStatus,
   SubscriptionStatus,
+  TeamMember,
 } from "@/types/admin.types";
+import type { UserStatus } from "@/types/auth.types";
 import type { BadgeTone } from "@/types/badge.types";
 
 type StatusMap<K extends string> = Record<K, { label: string; tone: BadgeTone }>;
@@ -52,8 +53,16 @@ export const ORG_ROLE: StatusMap<OrgRole> = {
   member: { label: "Member", tone: "neutral" },
 };
 
-export const ADMIN_ACCESS: StatusMap<AdminAccess> = {
-  owner: { label: "Owner", tone: "info" },
-  admin: { label: "Admin", tone: "neutral" },
-  support: { label: "Support", tone: "neutral" },
+/** Platform team roles, as the API sends them. */
+export const TEAM_ROLE: StatusMap<TeamMember["role"]> = {
+  OWNER: { label: "Owner", tone: "info" },
+  ADMIN: { label: "Admin", tone: "neutral" },
+  SUPPORT: { label: "Support", tone: "neutral" },
+};
+
+/** Account status, as the API sends it. */
+export const USER_STATUS: StatusMap<UserStatus> = {
+  ACTIVE: { label: "Active", tone: "success" },
+  INVITED: { label: "Invited", tone: "info" },
+  SUSPENDED: { label: "Suspended", tone: "danger" },
 };

@@ -1,31 +1,23 @@
-import type { AdminAccess } from "@/types/admin.types";
+import type { TeamMember } from "@/types/admin.types";
 
-// TODO(auth): enforced by requireRole/permission checks once admin auth exists.
-export const ACCESS_LEVELS: { access: AdminAccess; summary: string; can: string[] }[] = [
+/** What each platform role can do; the API enforces it (spec §5). */
+export const ACCESS_LEVELS: { role: TeamMember["role"]; summary: string; can: string[] }[] = [
   {
-    access: "owner",
+    role: "OWNER",
     summary: "Full control of the platform.",
     can: [
       "Everything an Admin can do",
-      "Billing settings and payment provider",
-      "Invite and remove admins",
+      "Invite admins and support, change their role, suspend or remove them",
     ],
   },
   {
-    access: "admin",
-    summary: "Runs customers and infrastructure day to day.",
-    can: [
-      "Manage organizations, users and subscriptions",
-      "Edit plans",
-      "Operate emulators and hosts",
-    ],
+    role: "ADMIN",
+    summary: "Runs organizations, users and plans day to day.",
+    can: ["Create and manage organizations and their users", "Create and edit plans"],
   },
   {
-    access: "support",
-    summary: "Read-only — for answering customer questions.",
-    can: ["View customers, billing and the fleet", "Read the audit log"],
+    role: "SUPPORT",
+    summary: "Read-only, for answering customer questions.",
+    can: ["See organizations, users and plans", "Manage their own profile and password"],
   },
 ];
-
-/** The signed-in admin — can't remove themselves. TODO(auth): from the session. */
-export const CURRENT_ADMIN_ID = "adm_alex";

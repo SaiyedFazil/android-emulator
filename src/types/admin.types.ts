@@ -1,3 +1,4 @@
+import type { UserStatus } from "@/types/auth.types";
 import type { Emulator } from "@/types/emulator.types";
 
 /* Admin console data. Money is integer cents (USD); timestamps are ISO 8601 strings. */
@@ -119,14 +120,28 @@ export interface AuditEvent {
   ip: string | null;
 }
 
-export type AdminAccess = "owner" | "admin" | "support";
+/** The roles the owner can give on the Team page; `OWNER` comes only from the setup script. */
+export type TeamRole = "ADMIN" | "SUPPORT";
 
-export interface AdminMember {
-  id: string;
-  name: string;
+/** One person on the platform team, from `GET /admin/team`. */
+export interface TeamMember {
+  uuid: string;
   email: string;
-  access: AdminAccess;
-  status: "active" | "invited";
-  twoFactor: boolean;
+  firstName: string;
+  lastName: string;
+  role: "OWNER" | TeamRole;
+  status: UserStatus;
+  /** ISO 8601 timestamp of the last sign-in; null if they never signed in. */
   lastActiveAt: string | null;
 }
+
+/** What the owner sends to invite someone. */
+export interface TeamInvite {
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: TeamRole;
+}
+
+/** `restored` is true when the email belonged to a removed team member, whose account came back. */
+export type InvitedTeamMember = TeamMember & { restored: boolean };

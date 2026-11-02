@@ -3,7 +3,7 @@
 import * as React from "react";
 import { toast } from "sonner";
 
-import { ADMIN_ACCESS } from "@/components/pages/admin/constants/status.constants";
+import { TEAM_ROLE } from "@/components/pages/admin/constants/status.constants";
 import { ACCESS_LEVELS } from "@/components/pages/admin/team/constants/access.constants";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,7 +23,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import type { AdminAccess } from "@/types/admin.types";
+import type { TeamRole } from "@/types/admin.types";
 
 // TODO(auth): sends the invite through the admin-team API.
 export function InviteAdminSheet({
@@ -33,13 +33,13 @@ export function InviteAdminSheet({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const [access, setAccess] = React.useState<AdminAccess>("support");
-  const level = ACCESS_LEVELS.find((l) => l.access === access);
+  const [access, setAccess] = React.useState<TeamRole>("SUPPORT");
+  const level = ACCESS_LEVELS.find((l) => l.role === access);
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const email = String(new FormData(event.currentTarget).get("email") ?? "");
-    toast.success("Invite sent", { description: `${email} · ${ADMIN_ACCESS[access].label}` });
+    toast.success("Invite sent", { description: `${email} · ${TEAM_ROLE[access].label}` });
     onOpenChange(false);
   };
 
@@ -68,14 +68,14 @@ export function InviteAdminSheet({
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="invite-access">Access level</Label>
-              <Select value={access} onValueChange={(v) => setAccess(v as AdminAccess)}>
+              <Select value={access} onValueChange={(v) => setAccess(v as TeamRole)}>
                 <SelectTrigger id="invite-access" className="h-9 w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {ACCESS_LEVELS.map((l) => (
-                    <SelectItem key={l.access} value={l.access}>
-                      {ADMIN_ACCESS[l.access].label}
+                  {ACCESS_LEVELS.filter((l) => l.role !== "OWNER").map((l) => (
+                    <SelectItem key={l.role} value={l.role}>
+                      {TEAM_ROLE[l.role].label}
                     </SelectItem>
                   ))}
                 </SelectContent>

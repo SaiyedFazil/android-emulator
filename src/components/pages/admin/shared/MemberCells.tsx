@@ -3,6 +3,7 @@ import { ShieldCheck, ShieldOff } from "lucide-react";
 
 import { EntityAvatar } from "@/components/custom/EntityAvatar";
 import { LocalTime } from "@/components/custom/LocalTime";
+import type { Dayjs } from "@/lib/dayjs";
 import { formatRelativeTime } from "@/lib/format";
 import { SAMPLE_NOW } from "@/lib/sample-time";
 import type { Member } from "@/types/admin.types";
@@ -44,11 +45,21 @@ export function RunningCell({ running }: { running: number }) {
   );
 }
 
-export function LastActiveCell({ at }: { at: string | null }) {
+/**
+ * "3 hours ago" against `now`. Live pages pass `useNow()`, which is null until mount, so the date
+ * shows first; the static sample pages keep `SAMPLE_NOW`.
+ */
+export function LastActiveCell({
+  at,
+  now = SAMPLE_NOW,
+}: {
+  at: string | null;
+  now?: Dayjs | null;
+}) {
   if (!at) return <span className="text-muted-foreground">Never</span>;
   return (
-    <LocalTime value={at} className="whitespace-nowrap text-muted-foreground">
-      {formatRelativeTime(at, SAMPLE_NOW)}
+    <LocalTime value={at} format="date" className="whitespace-nowrap text-muted-foreground">
+      {now ? formatRelativeTime(at, now) : undefined}
     </LocalTime>
   );
 }
