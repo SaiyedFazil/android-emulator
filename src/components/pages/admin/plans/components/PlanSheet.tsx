@@ -53,8 +53,8 @@ export function PlanSheet({ open, onOpenChange, plan }: PlanSheetProps) {
   const [formError, setFormError] = React.useState<string | null>(null);
   const editing = plan !== null;
   const save = useMutation({
-    mutationFn: (input: PlanInput) =>
-      plan ? plansApi.updatePlan(plan.uuid, changesOf(plan, input)) : plansApi.createPlan(input),
+    mutationFn: (input: Partial<PlanInput>) =>
+      plan ? plansApi.updatePlan(plan.uuid, input) : plansApi.createPlan(input as PlanInput),
   });
 
   const formik = useFormik<Values>({
@@ -64,9 +64,15 @@ export function PlanSheet({ open, onOpenChange, plan }: PlanSheetProps) {
     onSubmit: async (values, helpers) => {
       setFormError(null);
       const input = planSchema.cast(values) as PlanInput;
+      // Editing sends only what changed; nothing changed (e.g. only spaces added) saves nothing.
+      const body = plan ? changesOf(plan, input) : input;
+      if (Object.keys(body).length === 0) {
+        close();
+        return;
+      }
       let saved: ApiPlan;
       try {
-        saved = (await save.mutateAsync(input)).data;
+        saved = (await save.mutateAsync(body)).data;
       } catch (error) {
         const { status, code, message } = getApiError(error);
         if (code === "PLAN_NAME_TAKEN") {
@@ -158,7 +164,7 @@ export function PlanSheet({ open, onOpenChange, plan }: PlanSheetProps) {
             <Button type="button" variant="outline" onClick={close}>
               Cancel
             </Button>
-            <Button type="submit" disabled={formik.isSubmitting}>
+            <Button type="submit" disabled={formik.isSubmitting || (editing && !formik.dirty)}>
               {formik.isSubmitting ? "Saving…" : editing ? "Save changes" : "Create plan"}
             </Button>
           </SheetFooter>
