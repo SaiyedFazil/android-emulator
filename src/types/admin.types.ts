@@ -7,7 +7,8 @@ import type { Emulator } from "@/types/emulator.types";
 export interface ApiPlan {
   uuid: string;
   name: string;
-  description: string;
+  /** Null when the plan has no description. */
+  description: string | null;
   /** How many emulators an organization on it can have (shown, not yet enforced). */
   emulatorLimit: number;
   createdAt: string;

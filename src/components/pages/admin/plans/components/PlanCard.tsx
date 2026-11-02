@@ -24,7 +24,9 @@ export function PlanCard({ plan, canManage, onEdit, onDelete }: PlanCardProps) {
     <Card className="gap-5 p-5">
       <div className="flex flex-col gap-1.5">
         <h2 className="text-lg font-semibold tracking-tight break-words">{plan.name}</h2>
-        <p className="text-sm whitespace-pre-line text-muted-foreground">{plan.description}</p>
+        {plan.description ? (
+          <p className="text-sm whitespace-pre-line text-muted-foreground">{plan.description}</p>
+        ) : null}
       </div>
 
       <div className="flex items-center gap-3 rounded-lg bg-muted/60 px-3 py-2.5">

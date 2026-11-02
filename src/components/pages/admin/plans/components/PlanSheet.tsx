@@ -63,7 +63,9 @@ export function PlanSheet({ open, onOpenChange, plan }: PlanSheetProps) {
     validationSchema: planSchema,
     onSubmit: async (values, helpers) => {
       setFormError(null);
-      const input = planSchema.cast(values) as PlanInput;
+      const cast = planSchema.cast(values);
+      // An empty description means the plan has none.
+      const input: PlanInput = { ...cast, description: cast.description || null };
       // Editing sends only what changed; nothing changed (e.g. only spaces added) saves nothing.
       const body = plan ? changesOf(plan, input) : input;
       if (Object.keys(body).length === 0) {
@@ -137,7 +139,9 @@ export function PlanSheet({ open, onOpenChange, plan }: PlanSheetProps) {
               {fieldError("name")}
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="plan-description">Description</Label>
+              <Label htmlFor="plan-description">
+                Description <span className="font-normal text-muted-foreground">(optional)</span>
+              </Label>
               <Textarea {...fieldProps("description")} rows={4} />
               {fieldError("description")}
             </div>

@@ -130,9 +130,9 @@ export const planSchema = Yup.object({
     .trim()
     .required("Enter a name.")
     .max(PLAN_NAME_MAX_LENGTH, `Use at most ${PLAN_NAME_MAX_LENGTH} characters.`),
+  // Optional: empty means the plan has no description.
   description: Yup.string()
     .trim()
-    .required("Enter a description.")
     .max(PLAN_DESCRIPTION_MAX_LENGTH, `Use at most ${PLAN_DESCRIPTION_MAX_LENGTH} characters.`),
   emulatorLimit: Yup.number()
     .typeError(EMULATOR_LIMIT_MESSAGE)
