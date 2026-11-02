@@ -14,7 +14,7 @@ export function PersonCell({ member }: { member: Member }) {
   return (
     <Link
       href={`/admin/users/${member.id}`}
-      className="group flex max-w-[280px] min-w-0 items-center gap-3 outline-none"
+      className="group flex max-w-70 min-w-0 items-center gap-3 outline-none"
     >
       <EntityAvatar name={member.name} size="sm" />
       <span className="flex min-w-0 flex-col">
@@ -25,7 +25,7 @@ export function PersonCell({ member }: { member: Member }) {
           {member.name}
         </span>
         <span
-          className="truncate text-xs text-muted-foreground [[data-card-header]_&]:text-current [[data-card-header]_&]:opacity-75"
+          className="truncate text-xs text-muted-foreground in-data-card-header:text-current in-data-card-header:opacity-75"
           title={member.email}
         >
           {member.email}

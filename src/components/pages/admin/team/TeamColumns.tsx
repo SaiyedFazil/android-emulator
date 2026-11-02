@@ -75,7 +75,7 @@ export function teamColumns({
       accessorFn: fullName,
       header: ({ column }) => <ColumnHeader column={column} title="Admin" />,
       cell: ({ row }) => (
-        <div className="flex max-w-[280px] min-w-0 items-center gap-3">
+        <div className="flex max-w-70 min-w-0 items-center gap-3">
           <EntityAvatar name={fullName(row.original)} size="sm" />
           <span className="flex min-w-0 flex-col">
             <span className="flex items-center gap-1.5 truncate font-medium">
@@ -86,7 +86,7 @@ export function teamColumns({
                 </span>
               ) : null}
             </span>
-            <span className="truncate text-xs text-muted-foreground [[data-card-header]_&]:text-current [[data-card-header]_&]:opacity-75">
+            <span className="truncate text-xs text-muted-foreground in-data-card-header:text-current in-data-card-header:opacity-75">
               {row.original.email}
             </span>
           </span>
