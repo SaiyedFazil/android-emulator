@@ -18,6 +18,14 @@ The NestJS backend is `../emulator-backend`. Its design
 reference for wiring pages to the API, phase by phase, each phase with its frontend part:
 §6.4 auth behaviour, §8 endpoints, §10 frontend integration, §11 phases.
 
+**Frontend work from Phase 4 on comes as a ready plan.** The backend is built separately. For
+each phase, a step-by-step implementation plan for this repo is added to
+`docs/superpowers/plans/` (named `YYYY-MM-DD-phase-N-<area>-frontend.md`). It covers the exact
+endpoints and JSON, error codes, roles, files, copy and hand checks. When asked to implement a
+phase, read that plan and carry it out task by task, as written. The design and planning are
+already done; the backend is already live on GitLab `dev`. If the plan and the code disagree,
+stop and ask rather than guess.
+
 - The structure follows the user's t-genius frontend (`D:\t-genius\t-genius-frontend`), in one app.
 - **Session:** Auth.js v5 (`src/auth.ts`, Credentials) keeps both tokens in its encrypted HttpOnly
   cookie; the browser only gets `session.accessToken`. Sign-in and refresh run on the Next server
