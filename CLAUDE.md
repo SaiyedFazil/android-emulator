@@ -7,8 +7,8 @@ Guidance for Claude Code when working in this repository.
 ## What this is
 
 A single Next.js 16 app (App Router, `cacheComponents` + `partialPrefetching` on) for managing
-Android emulators. Sign-in and the profile are live against the backend; other pages stay on
-sample data until their phase. Design direction "Graphite & Teal"
+Android emulators. Sign-in, the profile and the admin Team page are live against the backend;
+other pages stay on sample data until their phase. Design direction "Graphite & Teal"
 (spec: `docs/superpowers/specs/2026-10-19-emulator-console-design.md`).
 
 ## Backend integration
@@ -23,7 +23,12 @@ reference for wiring pages to the API, phase by phase, each phase with its front
   cookie; the browser only gets `session.accessToken`. Sign-in and refresh run on the Next server
   (`lib/auth/backend-auth.ts`, native fetch), forwarding `User-Agent` / `X-Forwarded-For`; a refresh
   happens once per refresh token (`lib/auth/refresh-once.ts`). A refused refresh returns `null` from
-  the `jwt` callback, which ends the session and clears the cookie.
+  the `jwt` callback, which ends the session and clears the cookie. A role change ends the
+  person's sessions on the backend, so their next request sends them to sign in again; there is
+  no transparent refresh into the new role.
+- **Admin Team** (`components/pages/admin/team/`, `lib/api/admin-team/admin-team-api.ts`): only
+  the owner sees the Invite button and the row actions. Suspend and Remove are confirmed with
+  `components/ui/alert-dialog.tsx`. After any change, invalidate `TEAM_QUERY_KEY`.
 - **No `next-auth/react` in the browser.** Sign-in and sign-out are Server Actions
   (`lib/auth/auth-actions.ts`: one request each, CSRF-protected by Next.js). The browser reads the
   session with `lib/auth/session-client.ts`: one `GET /auth/session` per page load, shared by every
