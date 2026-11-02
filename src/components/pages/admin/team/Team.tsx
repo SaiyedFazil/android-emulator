@@ -40,11 +40,11 @@ async function runAction(action: TeamAction, member: TeamMember): Promise<void> 
       toast.success("Invitation resent", { description: member.email });
       break;
     case "suspend":
-      await adminTeamApi.suspend(member.uuid);
+      await adminTeamApi.changeStatus(member.uuid, "SUSPENDED");
       toast.success(`${name} suspended`, { description: "Signed out everywhere." });
       break;
     case "reactivate":
-      await adminTeamApi.reactivate(member.uuid);
+      await adminTeamApi.changeStatus(member.uuid, "ACTIVE");
       toast.success(`${name} reactivated`);
       break;
     case "remove":

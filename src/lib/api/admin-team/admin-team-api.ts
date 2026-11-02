@@ -26,14 +26,14 @@ export const adminTeamApi = {
     await api.post(`/admin/team/${uuid}/resend-invite`);
   },
 
-  /** Signs them out everywhere; they can't sign in until reactivated. */
-  suspend: async (uuid: string): Promise<ApiResponse<TeamMember>> => {
-    const response = await api.post<ApiResponse<TeamMember>>(`/admin/team/${uuid}/suspend`);
-    return response.data;
-  },
-
-  reactivate: async (uuid: string): Promise<ApiResponse<TeamMember>> => {
-    const response = await api.post<ApiResponse<TeamMember>>(`/admin/team/${uuid}/reactivate`);
+  /** `SUSPENDED` signs them out everywhere and blocks sign-in; `ACTIVE` lifts it. */
+  changeStatus: async (
+    uuid: string,
+    status: "ACTIVE" | "SUSPENDED"
+  ): Promise<ApiResponse<TeamMember>> => {
+    const response = await api.patch<ApiResponse<TeamMember>>(`/admin/team/${uuid}/status`, {
+      status,
+    });
     return response.data;
   },
 
