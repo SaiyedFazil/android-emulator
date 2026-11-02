@@ -4,7 +4,7 @@ A web console for managing Android emulators connected to your hosts: a fleet da
 emulator list with search, filters and row actions, an admin console, and profile and settings
 pages.
 
-Sign-in, the profile and the admin Team page run against the NestJS backend
+Sign-in, the profile and the admin Team and Plans pages run against the NestJS backend
 (`../emulator-backend`). The other pages
 still show sample data from `constants/` files until their phase (see [Static data](#static-data)).
 

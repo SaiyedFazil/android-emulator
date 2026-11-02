@@ -7,8 +7,8 @@ Guidance for Claude Code when working in this repository.
 ## What this is
 
 A single Next.js 16 app (App Router, `cacheComponents` + `partialPrefetching` on) for managing
-Android emulators. Sign-in, the profile and the admin Team page are live against the backend;
-other pages stay on sample data until their phase. Design direction "Graphite & Teal"
+Android emulators. Sign-in, the profile and the admin Team and Plans pages are live against the
+backend; other pages stay on sample data until their phase. Design direction "Graphite & Teal"
 (spec: `docs/superpowers/specs/2026-10-19-emulator-console-design.md`).
 
 ## Backend integration
@@ -28,7 +28,11 @@ reference for wiring pages to the API, phase by phase, each phase with its front
   no transparent refresh into the new role.
 - **Admin Team** (`components/pages/admin/team/`, `lib/api/admin-team/admin-team-api.ts`): only
   the owner sees the Invite button and the row actions. Suspend and Remove are confirmed with
-  `components/ui/alert-dialog.tsx`. After any change, invalidate `TEAM_QUERY_KEY`.
+  `components/custom/ConfirmActionDialog.tsx`. After any change, invalidate `TEAM_QUERY_KEY`.
+- **Admin Plans** (`components/pages/admin/plans/`, `lib/api/plans/plans-api.ts`, type `ApiPlan`):
+  the owner and admins create, edit and delete; support reads. After any change, invalidate
+  `PLANS_QUERY_KEY`. The sample `Plan` / `PLANS` in `plan.constants.ts` stay only for the pages
+  that are static until Phase 4 (billing, dashboard, organizations, settings).
 - **No `next-auth/react` in the browser.** Sign-in and sign-out are Server Actions
   (`lib/auth/auth-actions.ts`: one request each, CSRF-protected by Next.js). The browser reads the
   session with `lib/auth/session-client.ts`: one `GET /auth/session` per page load, shared by every
