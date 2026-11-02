@@ -95,6 +95,27 @@ export const changePasswordSchema = Yup.object({
   confirmPassword: confirmPasswordSchema,
 });
 
+// ---------------------------------------------------------------------------
+// Admin team
+// ---------------------------------------------------------------------------
+
+export const teamInviteSchema = Yup.object({
+  firstName: Yup.string()
+    .trim()
+    .required("Enter their first name.")
+    .max(NAME_MAX_LENGTH, `Use at most ${NAME_MAX_LENGTH} characters.`),
+  lastName: Yup.string()
+    .trim()
+    .required("Enter their last name.")
+    .max(NAME_MAX_LENGTH, `Use at most ${NAME_MAX_LENGTH} characters.`),
+  email: Yup.string()
+    .trim()
+    .required("Enter their email address.")
+    .max(EMAIL_MAX_LENGTH, "That email address is too long.")
+    .email("Enter a valid email address."),
+  role: Yup.string().oneOf(["ADMIN", "SUPPORT"]).required(),
+});
+
 export const acceptInvitationSchema = Yup.object({
   username: usernameSchema,
   password: passwordSchema,

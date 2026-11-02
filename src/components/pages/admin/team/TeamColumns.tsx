@@ -1,8 +1,11 @@
 "use client";
 
+import { Ban, MailPlus, RotateCcw, ShieldCheck, UserMinus } from "lucide-react";
+
 import { ColumnHeader } from "@/components/custom/ColumnHeader";
 import type { DataTableColumnDef } from "@/components/custom/data-table";
 import { EntityAvatar } from "@/components/custom/EntityAvatar";
+import { RowActions, type RowAction } from "@/components/custom/RowActions";
 import { ToneBadge } from "@/components/custom/ToneBadge";
 import { TEAM_ROLE, USER_STATUS } from "@/components/pages/admin/constants/status.constants";
 import { LastActiveCell } from "@/components/pages/admin/shared/MemberCells";
@@ -29,9 +32,42 @@ function LiveLastActive({ at }: { at: string | null }) {
   return <LastActiveCell at={at} now={useNow()} />;
 }
 
+/** The owner's menu for one member; the owner's own row has none. */
+function TeamRowActions({
+  member,
+  onAction,
+}: {
+  member: TeamMember;
+  onAction: TeamColumnsOptions["onAction"];
+}) {
+  if (member.role === "OWNER") return null;
+  const run = (action: TeamAction) => () => onAction(action, member);
+  const actions: RowAction[] = [
+    member.role === "ADMIN"
+      ? { label: "Change to Support", icon: <ShieldCheck />, onSelect: run("make-support") }
+      : { label: "Change to Admin", icon: <ShieldCheck />, onSelect: run("make-admin") },
+  ];
+  if (member.status === "INVITED") {
+    actions.push({ label: "Resend invite", icon: <MailPlus />, onSelect: run("resend-invite") });
+  } else if (member.status === "ACTIVE") {
+    actions.push({ label: "Suspend", icon: <Ban />, onSelect: run("suspend") });
+  } else {
+    actions.push({ label: "Reactivate", icon: <RotateCcw />, onSelect: run("reactivate") });
+  }
+  actions.push({
+    label: "Remove",
+    icon: <UserMinus />,
+    destructive: true,
+    separatorBefore: true,
+    onSelect: run("remove"),
+  });
+  return <RowActions label={fullName(member)} actions={actions} />;
+}
+
 export function teamColumns({
   viewerUuid,
   canManage,
+  onAction,
 }: TeamColumnsOptions): DataTableColumnDef<TeamMember>[] {
   const columns: DataTableColumnDef<TeamMember>[] = [
     {
@@ -93,8 +129,7 @@ export function teamColumns({
       id: "actions",
       enableSorting: false,
       header: () => <span className="sr-only">Actions</span>,
-      // The row menu arrives with the write actions.
-      cell: () => null,
+      cell: ({ row }) => <TeamRowActions member={row.original} onAction={onAction} />,
       meta: {
         headerClassName: "sticky right-0 z-10 w-12",
         cellClassName:
