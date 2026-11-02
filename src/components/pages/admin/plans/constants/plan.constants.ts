@@ -1,6 +1,10 @@
 import type { Plan } from "@/types/admin.types";
 
-// TODO(api): plans come from the billing backend. Tiers differ only by concurrent emulators.
+/** The live plans query; invalidate it after any change to a plan. */
+export const PLANS_QUERY_KEY = ["plans"] as const;
+
+// TODO(api): sample plans for the pages that stay static until Phase 4 (billing, dashboard,
+// organizations, settings). The Plans page itself reads /admin/plans.
 export const PLANS: Plan[] = [
   {
     id: "free",

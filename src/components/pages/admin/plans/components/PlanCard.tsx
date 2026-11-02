@@ -1,56 +1,30 @@
-import { Pencil, Smartphone } from "lucide-react";
+"use client";
 
-import { ToneBadge } from "@/components/custom/ToneBadge";
-import { YEARLY_MONTHS } from "@/components/pages/admin/plans/constants/plan.constants";
+import { Pencil, Smartphone, Trash2 } from "lucide-react";
+
+import { LocalTime } from "@/components/custom/LocalTime";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { formatCurrency, formatPrice } from "@/lib/format";
-import { cn } from "@/lib/utils";
-import type { Plan } from "@/types/admin.types";
+import { useNow } from "@/hooks/use-now";
+import { formatRelativeTime } from "@/lib/format";
+import type { ApiPlan } from "@/types/admin.types";
 
 interface PlanCardProps {
-  plan: Plan;
-  cycle: "monthly" | "yearly";
-  subscribers: number;
-  mrr: number;
-  popular: boolean;
+  plan: ApiPlan;
+  /** The owner and admins edit and delete plans; support only reads them. */
+  canManage: boolean;
   onEdit: () => void;
+  onDelete: () => void;
 }
 
-export function PlanCard({ plan, cycle, subscribers, mrr, popular, onEdit }: PlanCardProps) {
-  const yearly = cycle === "yearly";
-  const price =
-    plan.priceMonthly === null ? null : plan.priceMonthly * (yearly ? YEARLY_MONTHS : 1);
+export function PlanCard({ plan, canManage, onEdit, onDelete }: PlanCardProps) {
+  const now = useNow();
 
   return (
-    <Card className={cn("gap-5 p-5", popular && "ring-2 ring-primary")}>
+    <Card className="gap-5 p-5">
       <div className="flex flex-col gap-1.5">
-        <div className="flex items-center justify-between gap-2">
-          <h2 className="flex items-center gap-2 text-lg font-semibold tracking-tight">
-            {plan.name}
-            {popular ? (
-              <span className="rounded-full bg-primary px-2 py-0.5 text-[11px] font-semibold tracking-normal text-primary-foreground">
-                Most popular
-              </span>
-            ) : null}
-          </h2>
-          <ToneBadge
-            tone={plan.status === "active" ? "success" : "neutral"}
-            label={plan.status === "active" ? "Active" : "Archived"}
-          />
-        </div>
-        <p className="min-h-10 text-sm text-muted-foreground">{plan.description}</p>
-      </div>
-
-      <div className="flex items-baseline gap-1">
-        <span className="font-mono text-3xl font-semibold tracking-tight tabular">
-          {formatPrice(price)}
-        </span>
-        {price !== null ? (
-          <span className="text-sm text-muted-foreground">/{yearly ? "year" : "month"}</span>
-        ) : (
-          <span className="text-sm text-muted-foreground">negotiated</span>
-        )}
+        <h2 className="text-lg font-semibold tracking-tight break-words">{plan.name}</h2>
+        <p className="text-sm whitespace-pre-line text-muted-foreground">{plan.description}</p>
       </div>
 
       <div className="flex items-center gap-3 rounded-lg bg-muted/60 px-3 py-2.5">
@@ -59,31 +33,34 @@ export function PlanCard({ plan, cycle, subscribers, mrr, popular, onEdit }: Pla
         </span>
         <div className="flex flex-col leading-tight">
           <span className="font-mono text-xl font-semibold tabular">
-            {plan.concurrentEmulators}
+            {plan.emulatorLimit.toLocaleString("en-US")}
           </span>
-          <span className="text-xs text-muted-foreground">Concurrent emulators</span>
+          <span className="text-xs text-muted-foreground">Emulator limit</span>
         </div>
       </div>
 
-      <dl className="grid grid-cols-2 gap-3 border-t pt-4 text-sm">
-        <div className="flex flex-col gap-0.5">
-          <dt className="text-xs text-muted-foreground">Organizations</dt>
-          <dd className="font-mono font-medium tabular">{subscribers}</dd>
-        </div>
-        <div className="flex flex-col gap-0.5">
-          <dt className="text-xs text-muted-foreground">MRR</dt>
-          <dd className="font-mono font-medium tabular">{formatCurrency(mrr)}</dd>
-        </div>
-      </dl>
-
-      <div className="mt-auto flex items-center justify-between gap-2">
-        <span className="text-xs text-muted-foreground">
-          {plan.visible ? "Offered at sign-up" : "Sales-led · hidden at sign-up"}
-        </span>
-        <Button variant="outline" size="sm" onClick={onEdit} aria-label={`Edit ${plan.name}`}>
-          <Pencil />
-          Edit
-        </Button>
+      <div className="mt-auto flex items-center justify-between gap-2 border-t pt-4">
+        <LocalTime value={plan.updatedAt} format="date" className="text-xs text-muted-foreground">
+          {now ? `Updated ${formatRelativeTime(plan.updatedAt, now)}` : undefined}
+        </LocalTime>
+        {canManage ? (
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={onEdit} aria-label={`Edit ${plan.name}`}>
+              <Pencil />
+              Edit
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onDelete}
+              aria-label={`Delete ${plan.name}`}
+              className="text-destructive hover:text-destructive"
+            >
+              <Trash2 />
+              Delete
+            </Button>
+          </div>
+        ) : null}
       </div>
     </Card>
   );

@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { DataTable } from "@/components/custom/data-table";
 import { DataTableSkeleton } from "@/components/custom/data-table/DataTableSkeleton";
 import { PageHeader } from "@/components/custom/PageHeader";
-import { ConfirmActionDialog } from "@/components/pages/admin/team/components/ConfirmActionDialog";
+import { ConfirmActionDialog } from "@/components/custom/ConfirmActionDialog";
 import { InviteAdminSheet } from "@/components/pages/admin/team/components/InviteAdminSheet";
 import { TEAM_QUERY_KEY } from "@/components/pages/admin/team/constants/team.constants";
 import { fullName, teamColumns, type TeamAction } from "@/components/pages/admin/team/TeamColumns";

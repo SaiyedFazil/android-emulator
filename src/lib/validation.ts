@@ -116,6 +116,32 @@ export const teamInviteSchema = Yup.object({
   role: Yup.string().oneOf(["ADMIN", "SUPPORT"]).required(),
 });
 
+// ---------------------------------------------------------------------------
+// Plans
+// ---------------------------------------------------------------------------
+
+const PLAN_NAME_MAX_LENGTH = 60;
+const PLAN_DESCRIPTION_MAX_LENGTH = 600;
+const EMULATOR_LIMIT_MAX = 10_000;
+const EMULATOR_LIMIT_MESSAGE = `Enter a whole number from 1 to ${EMULATOR_LIMIT_MAX.toLocaleString("en-US")}.`;
+
+export const planSchema = Yup.object({
+  name: Yup.string()
+    .trim()
+    .required("Enter a name.")
+    .max(PLAN_NAME_MAX_LENGTH, `Use at most ${PLAN_NAME_MAX_LENGTH} characters.`),
+  description: Yup.string()
+    .trim()
+    .required("Enter a description.")
+    .max(PLAN_DESCRIPTION_MAX_LENGTH, `Use at most ${PLAN_DESCRIPTION_MAX_LENGTH} characters.`),
+  emulatorLimit: Yup.number()
+    .typeError(EMULATOR_LIMIT_MESSAGE)
+    .required(EMULATOR_LIMIT_MESSAGE)
+    .integer(EMULATOR_LIMIT_MESSAGE)
+    .min(1, EMULATOR_LIMIT_MESSAGE)
+    .max(EMULATOR_LIMIT_MAX, EMULATOR_LIMIT_MESSAGE),
+});
+
 export const acceptInvitationSchema = Yup.object({
   username: usernameSchema,
   password: passwordSchema,

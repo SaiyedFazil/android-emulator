@@ -3,8 +3,23 @@ import type { Emulator } from "@/types/emulator.types";
 
 /* Admin console data. Money is integer cents (USD); timestamps are ISO 8601 strings. */
 
+/** A plan from `/admin/plans`: what the live Plans page shows and edits. */
+export interface ApiPlan {
+  uuid: string;
+  name: string;
+  description: string;
+  /** How many emulators an organization on it can have (shown, not yet enforced). */
+  emulatorLimit: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** What the Plan sheet sends: every field to create, only the changed ones to edit. */
+export type PlanInput = Pick<ApiPlan, "name" | "description" | "emulatorLimit">;
+
 export type PlanId = "free" | "starter" | "team" | "business" | "enterprise";
 
+/** Sample plan for the pages that stay static until Phase 4 (billing, dashboard, organizations). */
 export interface Plan {
   id: PlanId;
   name: string;
